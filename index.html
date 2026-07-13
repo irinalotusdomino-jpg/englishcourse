@@ -1577,7 +1577,14 @@
     font-size:20px;
     color:#fff;
     margin-bottom:16px;
+    overflow:hidden;
     background:linear-gradient(135deg,var(--pink,#ec4fa0),var(--violet,#7a5cf0));
+  }
+  .avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
   }
   .teacher-name{
     font-size:17px;
@@ -1651,6 +1658,13 @@
     font-weight:700;
     font-size:14px;
     color:#150c2b;
+    overflow:hidden;
+  }
+  .review-avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
   }
   .review-name{
     font-size:13.5px;
@@ -1697,7 +1711,7 @@
     <div class="teacher-scroll-wrap">
       <div class="teacher-scroll" id="teacherScroll">
         <div class="teacher-card">
-          <div class="avatar">EM</div>
+          <div class="avatar"><img src="https://i.pravatar.cc/150?img=47" alt="Emma Whitfield" loading="lazy"></div>
           <p class="teacher-name">Emma Whitfield</p>
           <p class="teacher-role">Носій мови · CELTA</p>
           <p class="teacher-desc">Спеціалізується на розмовній практиці та зніманні страху говорити.</p>
@@ -1705,7 +1719,7 @@
         </div>
 
         <div class="teacher-card">
-          <div class="avatar">ОК</div>
+          <div class="avatar"><img src="https://i.pravatar.cc/150?img=44" alt="Олена Ковальчук" loading="lazy"></div>
           <p class="teacher-name">Олена Ковальчук</p>
           <p class="teacher-role">Сертифікований викладач · 8 років</p>
           <p class="teacher-desc">Готує до співбесід і ділового спілкування англійською.</p>
@@ -1713,7 +1727,7 @@
         </div>
 
         <div class="teacher-card">
-          <div class="avatar">JM</div>
+          <div class="avatar"><img src="https://i.pravatar.cc/150?img=12" alt="James Miller" loading="lazy"></div>
           <p class="teacher-name">James Miller</p>
           <p class="teacher-role">Носій мови · TEFL</p>
           <p class="teacher-desc">Вчить вимову й живу розмовну англійську без зайвої граматики.</p>
@@ -1736,7 +1750,7 @@
       <div class="stars">★★★★★</div>
       <p class="review-quote">За два місяці подолала страх говорити. Викладачка завжди підлаштовувалась під мій темп і пояснювала складне простими словами.</p>
       <div class="review-footer">
-        <div class="review-avatar">НС</div>
+        <div class="review-avatar"><img src="https://i.pravatar.cc/100?img=25" alt="Наталія С." loading="lazy"></div>
         <div>
           <p class="review-name">Наталія С.</p>
           <p class="review-meta">Рівень A2 → B1</p>
@@ -1748,7 +1762,7 @@
       <div class="stars">★★★★★</div>
       <p class="review-quote">Проходив курс для співбесід. Через три місяці отримав офер у міжнародній компанії — англійська вже не була перешкодою.</p>
       <div class="review-footer">
-        <div class="review-avatar">ДП</div>
+        <div class="review-avatar"><img src="https://i.pravatar.cc/100?img=14" alt="Дмитро П." loading="lazy"></div>
         <div>
           <p class="review-name">Дмитро П.</p>
           <p class="review-meta">Рівень B1 → B2</p>
@@ -2496,7 +2510,482 @@
 })();
 </script>
 
+<!-- ===== FINAL CTA + SIGNUP FORM ===== -->
+<style>
+  #signup, #signup * { box-sizing:border-box; }
+  #signup{
+    position:relative;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:linear-gradient(180deg,var(--bg-mid,#1f1440) 0%,var(--bg-deep,#150c2b) 100%);
+    padding:64px 24px 80px;
+  }
+  #signup .signup-inner{
+    max-width:560px;
+    margin:0 auto;
+    position:relative;
+    z-index:1;
+  }
+  #signup .signup-glow{
+    position:absolute;
+    top:-120px;
+    left:50%;
+    transform:translateX(-50%);
+    width:420px;
+    height:420px;
+    background:radial-gradient(circle,rgba(122,92,240,0.35) 0%,rgba(122,92,240,0) 70%);
+    z-index:0;
+    pointer-events:none;
+  }
+  #signup .eyebrow{
+    color:var(--teal,#5eead4);
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    margin:0 0 10px;
+    text-align:center;
+  }
+  #signup h2{
+    font-size:30px;
+    line-height:1.15;
+    margin:0 0 12px;
+    font-weight:800;
+    color:var(--text-main,#f4f1fb);
+    text-align:center;
+  }
+  #signup .lede{
+    color:var(--text-dim,#a99fc9);
+    font-size:15.5px;
+    line-height:1.5;
+    margin:0 0 34px;
+    text-align:center;
+  }
 
+  .signup-form{
+    background:var(--card,#241a45);
+    border:1px solid var(--card-border,rgba(255,255,255,0.08));
+    border-radius:22px;
+    padding:26px 22px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .signup-form .field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+  }
+  .signup-form label{
+    font-size:13px;
+    font-weight:700;
+    color:var(--text-main,#f4f1fb);
+  }
+  .signup-form input[type="text"],
+  .signup-form input[type="tel"],
+  .signup-form select{
+    width:100%;
+    padding:13px 14px;
+    border-radius:12px;
+    border:1px solid var(--card-border,rgba(255,255,255,0.08));
+    background:rgba(255,255,255,0.04);
+    color:var(--text-main,#f4f1fb);
+    font-size:14.5px;
+    font-family:inherit;
+    outline:none;
+    transition:border-color .2s ease;
+  }
+  .signup-form input::placeholder{
+    color:var(--text-dim,#a99fc9);
+  }
+  .signup-form input:focus,
+  .signup-form select:focus{
+    border-color:var(--violet,#7a5cf0);
+  }
+  .signup-form select option{
+    background:#241a45;
+    color:#f4f1fb;
+  }
+
+  .submit-btn{
+    margin-top:6px;
+    display:inline-block;
+    width:100%;
+    padding:16px 20px;
+    border:none;
+    border-radius:999px;
+    background:linear-gradient(90deg,var(--pink,#ec4fa0),var(--violet,#7a5cf0));
+    color:#fff;
+    font-weight:700;
+    font-size:15.5px;
+    font-family:inherit;
+    cursor:pointer;
+    box-shadow:0 0 30px rgba(122,92,240,0.45);
+    transition:transform .2s ease, filter .2s ease;
+  }
+  .submit-btn:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.08);
+  }
+  .submit-btn:disabled{
+    opacity:0.55;
+    cursor:not-allowed;
+    transform:none;
+  }
+
+  #signup .signup-note{
+    margin:14px 0 0;
+    text-align:center;
+    font-size:12px;
+    color:var(--text-dim,#a99fc9);
+  }
+
+  #signup .signup-success{
+    text-align:center;
+    padding:10px 4px 4px;
+  }
+  #signup .signup-success .check{
+    width:56px;
+    height:56px;
+    margin:0 auto 16px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--pink,#ec4fa0),var(--violet,#7a5cf0));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    color:#fff;
+  }
+  #signup .signup-success h4{
+    margin:0 0 8px;
+    font-size:18px;
+    font-weight:800;
+    color:var(--text-main,#f4f1fb);
+  }
+  #signup .signup-success p{
+    margin:0;
+    font-size:13.5px;
+    color:var(--text-dim,#a99fc9);
+  }
+
+  /* ---------- quiz block ---------- */
+  .quiz-block{
+    border-top:1px dashed var(--card-border,rgba(255,255,255,0.14));
+    padding-top:16px;
+    margin-top:2px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .quiz-intro{
+    margin:0;
+    font-size:13px;
+    line-height:1.5;
+    color:var(--text-dim,#a99fc9);
+  }
+  .quiz-progress{
+    font-size:12px;
+    font-weight:700;
+    color:var(--teal,#5eead4);
+    margin:0;
+  }
+  .quiz-q{
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--card-border,rgba(255,255,255,0.08));
+    border-radius:14px;
+    padding:14px 14px 12px;
+  }
+  .quiz-q p.quiz-q-text{
+    margin:0 0 10px;
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--text-main,#f4f1fb);
+    line-height:1.45;
+  }
+  .quiz-q .quiz-opt{
+    display:flex;
+    align-items:flex-start;
+    gap:9px;
+    padding:9px 10px;
+    border-radius:10px;
+    font-size:13px;
+    color:var(--text-dim,#a99fc9);
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .quiz-q .quiz-opt:hover{
+    background:rgba(255,255,255,0.05);
+  }
+  .quiz-q .quiz-opt input{
+    margin-top:2px;
+    accent-color:var(--violet,#7a5cf0);
+    flex:0 0 auto;
+  }
+  .quiz-q .quiz-opt.picked{
+    color:var(--text-main,#f4f1fb);
+    background:rgba(122,92,240,0.14);
+  }
+
+  .quiz-calc-btn{
+    display:inline-block;
+    width:100%;
+    padding:14px 18px;
+    border:2px solid var(--violet,#7a5cf0);
+    border-radius:999px;
+    background:transparent;
+    color:var(--text-main,#f4f1fb);
+    font-weight:700;
+    font-size:14.5px;
+    font-family:inherit;
+    cursor:pointer;
+    transition:background .2s ease, color .2s ease;
+  }
+  .quiz-calc-btn:hover{
+    background:var(--violet,#7a5cf0);
+  }
+
+  .quiz-hint{
+    margin:0;
+    font-size:12px;
+    color:#ff9fbf;
+    display:none;
+  }
+  .quiz-hint.show{
+    display:block;
+  }
+
+  .quiz-result{
+    text-align:center;
+    background:rgba(94,234,212,0.08);
+    border:1px solid rgba(94,234,212,0.35);
+    border-radius:14px;
+    padding:18px 16px;
+  }
+  .quiz-result .quiz-level-badge{
+    display:inline-block;
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:.04em;
+    padding:5px 14px;
+    border-radius:999px;
+    background:linear-gradient(90deg,var(--pink,#ec4fa0),var(--violet,#7a5cf0));
+    color:#fff;
+    margin-bottom:10px;
+  }
+  .quiz-result p{
+    margin:0;
+    font-size:13.5px;
+    line-height:1.55;
+    color:var(--text-dim,#a99fc9);
+  }
+  .quiz-result p.quiz-result-score{
+    color:var(--text-main,#f4f1fb);
+    font-weight:700;
+    margin-bottom:4px;
+  }
+
+  @media(max-width:380px){
+    #signup h2{font-size:25px;}
+  }
+</style>
+
+<section id="signup">
+  <div class="signup-glow"></div>
+  <div class="signup-inner">
+    <p class="eyebrow">Останній крок</p>
+    <h2>Залиш заявку — і заговори англійською вже цього тижня</h2>
+    <p class="lede">Обери свій рівень або пройди швидкий тест на 14 запитань — підберемо викладача й план навчання саме під тебе.</p>
+
+    <form class="signup-form" id="signupForm">
+
+      <div class="field">
+        <label for="signupName">Ім'я</label>
+        <input type="text" id="signupName" name="name" placeholder="Як до тебе звертатись?" required>
+      </div>
+
+      <div class="field">
+        <label for="signupContact">Телефон або Telegram</label>
+        <input type="tel" id="signupContact" name="contact" placeholder="+380 ... або @nickname" required>
+      </div>
+
+      <div class="field">
+        <label for="levelSelect">Твій рівень англійської</label>
+        <select id="levelSelect" name="level" required>
+          <option value="" disabled selected>Оберіть рівень</option>
+          <option value="A1">A1 — Beginner</option>
+          <option value="A2">A2 — Elementary</option>
+          <option value="B1">B1 — Intermediate</option>
+          <option value="B2">B2 — Upper-Intermediate</option>
+          <option value="C1">C1 — Advanced</option>
+          <option value="unknown">Не знаю свій рівень 🤔</option>
+        </select>
+      </div>
+
+      <div class="quiz-block" id="quizBlock" hidden>
+        <p class="quiz-intro">Без проблем! Дай відповідь на 14 коротких запитань (~5 хв) — і ми визначимо твій рівень автоматично.</p>
+        <p class="quiz-progress" id="quizProgress">Відповіли: 0 / 14</p>
+
+        <div id="quizQuestions"></div>
+
+        <p class="quiz-hint" id="quizHint">Будь ласка, дайте відповідь на всі запитання перед підрахунком.</p>
+        <button type="button" class="quiz-calc-btn" id="quizCalcBtn">Порахувати мій рівень</button>
+
+        <div class="quiz-result" id="quizResult" hidden>
+          <div class="quiz-level-badge" id="quizLevelBadge"></div>
+          <p class="quiz-result-score" id="quizScoreText"></p>
+          <p id="quizLevelDesc"></p>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="signupSubmitBtn">Залишити заявку</button>
+    </form>
+
+    <div class="signup-success" id="signupSuccess" hidden>
+      <div class="check">✓</div>
+      <h4>Дякуємо! Заявку отримано</h4>
+      <p>Наш куратор зв'яжеться з тобою протягом робочого дня, щоб підібрати викладача та зручний час першого заняття.</p>
+    </div>
+
+    <p class="signup-note">Залишаючи заявку, ти погоджуєшся з умовами обробки персональних даних.</p>
+  </div>
+</section>
+
+<script>
+(function(){
+
+  /* ---- 14 questions from the level test ---- */
+  var QUIZ = [
+    { q: "1. I ___ from Ukraine.", opts: ["am", "is", "are"], correct: 0 },
+    { q: "2. Що означає фраза «How are you doing?»", opts: ["Де ти?", "Як справи?", "Що ти робиш?"], correct: 1 },
+    { q: "3. Yesterday we ___ football.", opts: ["play", "played", "playing"], correct: 1 },
+    { q: "4. She ___ English every day.", opts: ["study", "studies", "studying"], correct: 1 },
+    { q: "5. I have lived here ___ 2020.", opts: ["for", "since", "during"], correct: 1 },
+    { q: "6. If it rains tomorrow, we ___ at home.", opts: ["stay", "will stay", "stayed"], correct: 1 },
+    { q: "7. Як перекласти «I've just finished my homework»?", opts: ["Я щойно закінчив домашнє завдання.", "Я скоро закінчу домашнє завдання.", "Я завжди роблю домашнє завдання."], correct: 0 },
+    { q: "8. Знайдіть помилку: «He don't like coffee.»", opts: ["Помилок немає", "don't → doesn't", "like → likes"], correct: 1 },
+    { q: "9. If I ___ more free time, I would travel more.", opts: ["have", "had", "will have"], correct: 1 },
+    { q: "10. Що означає ідіома «Break the ice»?", opts: ["Розбити лід", "Почати невимушене спілкування", "Застудитися"], correct: 1 },
+    { q: "11. I look forward ___ you.", opts: ["to see", "seeing", "to seeing"], correct: 2 },
+    { q: "12. Яке речення звучить правильно?", opts: ["I wish I knew the answer.", "I wish I know the answer.", "I wish I will know the answer."], correct: 0 },
+    { q: "13. Що означає слово «Reliable»?", opts: ["Надійний", "Багатий", "Веселий"], correct: 0 },
+    { q: "14. The meeting ___ by the time I arrived.", opts: ["finished", "had finished", "has finished"], correct: 1 }
+  ];
+
+  var levelSelect = document.getElementById('levelSelect');
+  var quizBlock = document.getElementById('quizBlock');
+  var quizQuestions = document.getElementById('quizQuestions');
+  var quizProgress = document.getElementById('quizProgress');
+  var quizCalcBtn = document.getElementById('quizCalcBtn');
+  var quizHint = document.getElementById('quizHint');
+  var quizResult = document.getElementById('quizResult');
+  var quizLevelBadge = document.getElementById('quizLevelBadge');
+  var quizScoreText = document.getElementById('quizScoreText');
+  var quizLevelDesc = document.getElementById('quizLevelDesc');
+  var signupForm = document.getElementById('signupForm');
+  var signupSubmitBtn = document.getElementById('signupSubmitBtn');
+  var signupSuccess = document.getElementById('signupSuccess');
+  var computedLevel = null;
+
+  /* build quiz DOM once */
+  QUIZ.forEach(function(item, qi){
+    var qDiv = document.createElement('div');
+    qDiv.className = 'quiz-q';
+
+    var qText = document.createElement('p');
+    qText.className = 'quiz-q-text';
+    qText.textContent = item.q;
+    qDiv.appendChild(qText);
+
+    item.opts.forEach(function(optText, oi){
+      var label = document.createElement('label');
+      label.className = 'quiz-opt';
+
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'quizQ' + qi;
+      input.value = oi;
+
+      input.addEventListener('change', function(){
+        qDiv.querySelectorAll('.quiz-opt').forEach(function(l){ l.classList.remove('picked'); });
+        label.classList.add('picked');
+        updateProgress();
+      });
+
+      var span = document.createElement('span');
+      span.textContent = optText;
+
+      label.appendChild(input);
+      label.appendChild(span);
+      qDiv.appendChild(label);
+    });
+
+    quizQuestions.appendChild(qDiv);
+  });
+
+  function updateProgress(){
+    var answered = document.querySelectorAll('#quizQuestions input[type="radio"]:checked').length;
+    quizProgress.textContent = 'Відповіли: ' + answered + ' / ' + QUIZ.length;
+  }
+
+  levelSelect.addEventListener('change', function(){
+    if(levelSelect.value === 'unknown'){
+      quizBlock.hidden = false;
+      quizResult.hidden = true;
+      computedLevel = null;
+    } else {
+      quizBlock.hidden = true;
+    }
+  });
+
+  function levelFromScore(score){
+    if(score <= 4)  return { code:'A1', label:'A1 (Beginner)',        desc:'Ви знаєте базову лексику і прості граматичні конструкції.' };
+    if(score <= 7)  return { code:'A2', label:'A2 (Elementary)',      desc:'Ви можете спілкуватися у повсякденних ситуаціях і розумієте прості тексти.' };
+    if(score <= 10) return { code:'B1', label:'B1 (Intermediate)',    desc:'Ви впевнено спілкуєтеся на знайомі теми, розумієте фільми та статті середньої складності.' };
+    if(score <= 12) return { code:'B2', label:'B2 (Upper-Intermediate)', desc:'Ви вільно говорите, розумієте носіїв мови і можете працювати або навчатися англійською.' };
+    return { code:'C1', label:'C1 (Advanced)', desc:'Ви легко розумієте складні тексти, вільно спілкуєтеся і використовуєте мову практично без обмежень.' };
+  }
+
+  quizCalcBtn.addEventListener('click', function(){
+    var answered = document.querySelectorAll('#quizQuestions input[type="radio"]:checked').length;
+    if(answered < QUIZ.length){
+      quizHint.classList.add('show');
+      return;
+    }
+    quizHint.classList.remove('show');
+
+    var score = 0;
+    QUIZ.forEach(function(item, qi){
+      var picked = document.querySelector('input[name="quizQ' + qi + '"]:checked');
+      if(picked && parseInt(picked.value, 10) === item.correct) score++;
+    });
+
+    var result = levelFromScore(score);
+    computedLevel = result.code;
+
+    quizLevelBadge.textContent = result.label;
+    quizScoreText.textContent = 'Правильних відповідей: ' + score + ' / ' + QUIZ.length;
+    quizLevelDesc.textContent = result.desc;
+    quizResult.hidden = false;
+  });
+
+  signupForm.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    if(levelSelect.value === 'unknown' && !computedLevel){
+      quizBlock.scrollIntoView({ behavior:'smooth', block:'center' });
+      quizHint.classList.add('show');
+      return;
+    }
+
+    var finalLevel = levelSelect.value === 'unknown' ? computedLevel : levelSelect.value;
+
+    /* тут можна відправити дані (name, contact, finalLevel) на бекенд/CRM */
+    signupSubmitBtn.disabled = true;
+    signupForm.hidden = true;
+    signupSuccess.hidden = false;
+  });
+
+})();
+</script>
 
 </body>
 </html>
