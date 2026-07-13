@@ -1775,6 +1775,7 @@
 </div>
 
 <script>
+(function(){
   // scatter faint background letters like the hero section
   const container = document.getElementById('letters');
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -1806,6 +1807,7 @@
       dots.forEach((d,i)=> d.classList.toggle('active', i===closest));
     }, { passive:true });
   }
+})();
 </script>
 
 
@@ -2192,6 +2194,7 @@
   </section>
 </div>
 <script>
+(function(){
   const container = document.getElementById('letters');
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   for(let i=0;i<26;i++){
@@ -2211,6 +2214,7 @@
       btn.classList.add('active');
     });
   });
+})();
 </script>
 
 <style>
@@ -2450,6 +2454,7 @@
 </div>
 
 <script>
+(function(){
   const container = document.getElementById('letters');
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   for(let i=0;i<26;i++){
@@ -2488,6 +2493,7 @@
       if(item.classList.contains('open')) setHeight(item, true);
     });
   });
+})();
 </script>
 
 
