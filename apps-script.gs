@@ -1,13 +1,14 @@
 /**
  * ============================================================
- *  СКРИПТ ДЛЯ ПРИЙОМУ ЗАЯВОК З САЙТУ
- *  Записує заявку в Google Таблицю + шле повідомлення в Telegram
+ *  СКРИПТ ДЛЯ ПРИЙОМУ ЗАЯВОК ТА ПИТАНЬ З САЙТУ
+ *  Записує все в Google Таблицю + шле повідомлення в Telegram
+ *  + для питань з форми "Написати нам" додатково відправляє лист на email
  * ============================================================
  *
  *  ЯК ПІДКЛЮЧИТИ:
  *  1. Створіть нову Google Таблицю (google.com/sheets).
  *     У першому рядку (шапка) впишіть колонки:
- *     Дата | Ім'я | Контакт | Рівень | Формат | Сторінка
+ *     Дата | Тип | Ім'я | Контакт | Рівень | Формат | Питання | Сторінка
  *
  *  2. У таблиці: Розширення → Apps Script.
  *     Видаліть увесь код у редакторі й вставте весь вміст цього файлу.
@@ -15,6 +16,7 @@
  *  3. Замініть значення нижче:
  *     - TELEGRAM_BOT_TOKEN — токен вашого бота (див. пункт 5)
  *     - TELEGRAM_CHAT_ID   — ваш chat_id або id групи (див. пункт 6)
+ *     - NOTIFY_EMAIL       — пошта, куди слати питання з форми "Написати нам"
  *
  *  4. Збережіть проєкт (значок дискети).
  *
@@ -37,34 +39,43 @@
  *     - Хто має доступ: Усі (Anyone)
  *     Натисніть "Розгорнути", дозвольте доступ, скопіюйте URL веб-застосунку.
  *
- *  8. Вставте цей URL у index.html замість
- *     'https://script.google.com/macros/s/ВСТАВТЕ_СЮДИ_ID_РОЗГОРТАННЯ/exec'
- *     (змінна GAS_WEBAPP_URL у секції <script> форми заявки).
+ *  8. Вставте цей URL у index.html один раз — одразу після тегу <body>,
+ *     у змінну window.EGWU_GAS_URL. Він автоматично використовується
+ *     і формою заявки, і формою "Написати нам".
  *
- *  Готово — тепер кожна заявка з сайту автоматично:
+ *  Готово — тепер кожна заявка чи питання з сайту автоматично:
  *   а) додається новим рядком у Google Таблицю
  *   б) надсилається повідомленням у Telegram
+ *   в) якщо це питання з форми "Написати нам" — додатково лист на email
  * ============================================================
  */
 
-var TELEGRAM_BOT_TOKEN = '5597429243';
-var TELEGRAM_CHAT_ID   = 'AAE-EXwjKkGqQsxlgLDQgb6_hpGZEjI8-tQ';
+var TELEGRAM_BOT_TOKEN = 'ВСТАВТЕ_ТОКЕН_БОТА';
+var TELEGRAM_CHAT_ID   = 'ВСТАВТЕ_CHAT_ID';
+var NOTIFY_EMAIL       = 'kirillova_irina@ukr.net';
 
 function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
+    var type = data.type || 'lead'; // 'lead' — заявка з тарифів, 'question' — форма "Написати нам"
 
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     sheet.appendRow([
       data.date || new Date().toLocaleString('uk-UA'),
+      type === 'question' ? 'Питання' : 'Заявка',
       data.name || '',
       data.contact || '',
       data.level || '',
       data.format || '',
+      data.message || '',
       data.page || ''
     ]);
 
-    sendToTelegram(data);
+    sendToTelegram(data, type);
+
+    if (type === 'question') {
+      sendQuestionEmail(data);
+    }
 
     return ContentService
       .createTextOutput(JSON.stringify({ status: 'ok' }))
@@ -77,16 +88,26 @@ function doPost(e) {
   }
 }
 
-function sendToTelegram(data) {
+function sendToTelegram(data, type) {
   if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN.indexOf('ВСТАВТЕ') !== -1) return;
 
-  var text =
-    '🆕 Нова заявка з сайту\n\n' +
-    '👤 Ім\'я: ' + (data.name || '-') + '\n' +
-    '📞 Контакт: ' + (data.contact || '-') + '\n' +
-    '📊 Рівень: ' + (data.level || '-') + '\n' +
-    '🎓 Формат: ' + (data.format || '-') + '\n' +
-    '🕒 Дата: ' + (data.date || '-');
+  var text;
+  if (type === 'question') {
+    text =
+      '❓ Нове питання з сайту (форма "Написати нам")\n\n' +
+      '👤 Ім\'я: ' + (data.name || '-') + '\n' +
+      '📞 Контакт: ' + (data.contact || '-') + '\n' +
+      '💬 Питання: ' + (data.message || '-') + '\n' +
+      '🕒 Дата: ' + (data.date || '-');
+  } else {
+    text =
+      '🆕 Нова заявка з сайту\n\n' +
+      '👤 Ім\'я: ' + (data.name || '-') + '\n' +
+      '📞 Контакт: ' + (data.contact || '-') + '\n' +
+      '📊 Рівень: ' + (data.level || '-') + '\n' +
+      '🎓 Формат: ' + (data.format || '-') + '\n' +
+      '🕒 Дата: ' + (data.date || '-');
+  }
 
   var url = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage';
 
@@ -99,4 +120,17 @@ function sendToTelegram(data) {
     }),
     muteHttpExceptions: true
   });
+}
+
+function sendQuestionEmail(data) {
+  if (!NOTIFY_EMAIL) return;
+
+  var subject = 'Нове питання з сайту — ' + (data.name || 'без імені');
+  var body =
+    'Ім\'я: ' + (data.name || '-') + '\n' +
+    'Контакт: ' + (data.contact || '-') + '\n' +
+    'Дата: ' + (data.date || '-') + '\n\n' +
+    'Питання:\n' + (data.message || '-');
+
+  MailApp.sendEmail(NOTIFY_EMAIL, subject, body);
 }
