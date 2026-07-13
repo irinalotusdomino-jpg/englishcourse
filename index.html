@@ -919,5 +919,505 @@
 })();
 </script>
 
+
+<section class="eng-lvl" id="engLevels">
+
+  <div class="eng-lvl__glow eng-lvl__glow--1"></div>
+  <div class="eng-lvl__glow eng-lvl__glow--2"></div>
+
+  <div class="eng-lvl__inner" id="lvlInner">
+
+    <h2 class="eng-lvl__title" id="lvlTitle"></h2>
+    <p class="eng-lvl__subtitle" id="lvlSubtitle"></p>
+
+    <div class="eng-lvl__stepper-wrap">
+      <div class="eng-lvl__stepper" id="lvlStepper">
+        <div class="eng-lvl__line">
+          <div class="eng-lvl__line-fill" id="lvlLineFill"></div>
+        </div>
+        <div class="eng-lvl__nodes" id="lvlNodes"></div>
+      </div>
+    </div>
+
+    <div class="eng-lvl__panel" id="lvlPanel">
+      <div class="eng-lvl__panel-head">
+        <span class="eng-lvl__panel-code" id="lvlPanelCode"></span>
+        <div class="eng-lvl__panel-heading">
+          <h3 class="eng-lvl__panel-title" id="lvlPanelTitle"></h3>
+          <span class="eng-lvl__panel-duration" id="lvlPanelDuration"></span>
+        </div>
+      </div>
+      <p class="eng-lvl__panel-desc" id="lvlPanelDesc"></p>
+      <div class="eng-lvl__tags" id="lvlPanelTags"></div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+
+  #engLevels, #engLevels * { box-sizing: border-box; }
+
+  .eng-lvl {
+    position: relative;
+    overflow: hidden;
+    padding: 100px 20px;
+    background: linear-gradient(160deg, var(--lvl-bg-start) 0%, var(--lvl-bg-end) 100%);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .eng-lvl__glow {
+    position: absolute;
+    width: 460px;
+    height: 460px;
+    border-radius: 50%;
+    filter: blur(130px);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .eng-lvl__glow--1 { top: -140px; right: -100px; background: var(--lvl-accent-a); animation: engLvlDrift1 17s ease-in-out infinite; }
+  .eng-lvl__glow--2 { bottom: -160px; left: -120px; background: var(--lvl-accent-b); animation: engLvlDrift2 20s ease-in-out infinite; }
+
+  @keyframes engLvlDrift1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-40px, 40px); } }
+  @keyframes engLvlDrift2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(50px, -30px); } }
+
+  .eng-lvl__inner {
+    position: relative;
+    max-width: 980px;
+    margin: 0 auto;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .eng-lvl__inner.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .eng-lvl__title {
+    margin: 0 0 14px;
+    font-weight: 800;
+    font-size: clamp(28px, 4.5vw, 44px);
+    color: var(--lvl-title-color);
+  }
+
+  .eng-lvl__subtitle {
+    margin: 0 auto 56px;
+    max-width: 620px;
+    font-weight: 400;
+    font-size: clamp(15px, 2vw, 18px);
+    color: var(--lvl-subtitle-color);
+  }
+
+  /* -------- stepper -------- */
+  .eng-lvl__stepper-wrap {
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 40px;
+  }
+
+  .eng-lvl__stepper {
+    position: relative;
+    display: inline-flex;
+    min-width: 100%;
+    padding: 0 10px;
+  }
+
+  .eng-lvl__line {
+    position: absolute;
+    left: 34px;
+    right: 34px;
+    top: 24px;
+    height: 3px;
+    background: var(--lvl-line-bg);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .eng-lvl__line-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--lvl-accent-a), var(--lvl-accent-b));
+    transition: width 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .eng-lvl__nodes {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .eng-lvl__node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 6px;
+    font-family: inherit;
+    min-width: 68px;
+  }
+
+  .eng-lvl__node-dot {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--lvl-node-text);
+    background: var(--lvl-node-bg);
+    border: 2px solid var(--lvl-line-bg);
+    transition: transform 0.3s ease, border-color 0.3s ease,
+                background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  }
+
+  .eng-lvl__node-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--lvl-node-label-color);
+    white-space: nowrap;
+    transition: color 0.3s ease;
+  }
+
+  .eng-lvl__node:hover .eng-lvl__node-dot {
+    transform: translateY(-3px);
+  }
+
+  .eng-lvl__node.is-active .eng-lvl__node-dot {
+    background: linear-gradient(135deg, var(--lvl-accent-a), var(--lvl-accent-b));
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--lvl-accent-a) 22%, transparent);
+    animation: engLvlPulse 2.4s ease-in-out infinite;
+  }
+
+  .eng-lvl__node.is-active .eng-lvl__node-label {
+    color: var(--lvl-title-color);
+  }
+
+  @keyframes engLvlPulse {
+    0%, 100% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--lvl-accent-a) 22%, transparent); }
+    50%      { box-shadow: 0 0 0 10px color-mix(in srgb, var(--lvl-accent-a) 10%, transparent); }
+  }
+
+  /* -------- панель опису рівня -------- */
+  .eng-lvl__panel {
+    background: var(--lvl-panel-bg);
+    border: 1px solid var(--lvl-panel-border);
+    border-radius: 20px;
+    padding: 32px;
+    text-align: left;
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .eng-lvl__panel.is-switching {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .eng-lvl__panel-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .eng-lvl__panel-code {
+    flex: 0 0 auto;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--lvl-accent-a), var(--lvl-accent-b));
+  }
+
+  .eng-lvl__panel-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .eng-lvl__panel-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--lvl-panel-title-color);
+  }
+
+  .eng-lvl__panel-duration {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--lvl-accent-b);
+  }
+
+  .eng-lvl__panel-desc {
+    margin: 0 0 18px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--lvl-panel-text-color);
+  }
+
+  .eng-lvl__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .eng-lvl__tag {
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--lvl-tag-text);
+    background: var(--lvl-tag-bg);
+    border: 1px solid var(--lvl-panel-border);
+  }
+
+  @media (max-width: 560px) {
+    .eng-lvl { padding: 70px 16px; }
+    .eng-lvl__panel { padding: 24px 20px; }
+    .eng-lvl__node-dot { width: 42px; height: 42px; font-size: 12px; }
+  }
+
+</style>
+
+<script>
+(function () {
+
+  /* =====================================================================
+     CONFIG — ПРОГРАМА КУРСУ / РІВНІ (Beginner -> Advanced)
+     ===================================================================== */
+  var LVL_CONFIG = {
+
+    texts: {
+      title: "Програма курсу", /* ЗМІНИТИ: заголовок блоку */
+      subtitle: "П'ять рівнів — від перших слів до впевненої розмови в будь-якій ситуації" /* ЗМІНИТИ: підзаголовок блоку */
+    },
+
+    /* Кожен рівень — окремий об'єкт. Можна додавати чи видаляти рівні —
+       стрілка прогресу й кількість вузлів підлаштуються автоматично. */
+    levels: [
+      {
+        code: "A1", /* ЗМІНИТИ: короткий код рівня */
+        label: "Beginner", /* ЗМІНИТИ: назва під іконкою на шкалі */
+        title: "Beginner — з нуля", /* ЗМІНИТИ: заголовок у панелі опису */
+        duration: "8-10 тижнів", /* ЗМІНИТИ: орієнтовна тривалість рівня */
+        desc: "Знайомимося з мовою: алфавіт, базові фрази, читання і перші прості діалоги про себе й повсякденні речі", /* ЗМІНИТИ: опис рівня */
+        skills: ["Алфавіт і вимова", "Present Simple", "Базові фрази", "50+ нових слів на тиждень"] /* ЗМІНИТИ: навички/теми рівня */
+      },
+      {
+        code: "A2",
+        label: "Elementary",
+        title: "Elementary — впевнена база",
+        duration: "8-10 тижнів",
+        desc: "Розширюємо словниковий запас і вчимося будувати повʼязані речення про роботу, побут, плани на майбутнє",
+        skills: ["Past Simple", "Future forms", "Побутові діалоги", "Листування англійською"]
+      },
+      {
+        code: "B1",
+        label: "Intermediate",
+        title: "Intermediate — вільніше спілкування",
+        duration: "10-12 тижнів",
+        desc: "Говоримо довше і природніше: обговорюємо думки, погоджуємось і сперечаємось, дивимось відео без субтитрів",
+        skills: ["Conditionals", "Phrasal verbs", "Дискусії", "Аудіювання без субтитрів"]
+      },
+      {
+        code: "B2",
+        label: "Upper-Intermediate",
+        title: "Upper-Intermediate — впевнений рівень",
+        duration: "10-12 тижнів",
+        desc: "Готуємось до співбесід, презентацій і подорожей: складна граматика, ділова лексика, швидка реакція в розмові",
+        skills: ["Ділова англійська", "Презентації", "Складна граматика", "Співбесіди"]
+      },
+      {
+        code: "C1",
+        label: "Advanced",
+        title: "Advanced — рівень носія",
+        duration: "12+ тижнів",
+        desc: "Відточуємо нюанси мови: ідіоми, стилістика, вільна імпровізована розмова на будь-яку тему без підготовки",
+        skills: ["Ідіоми та сленг", "Академічна англійська", "Дебати", "Вільна імпровізація"]
+      }
+    ],
+
+    colors: {
+      bgStart: "#150c38", /* ЗМІНИТИ: фон блоку, початок градієнту */
+      bgEnd:   "#0d0726", /* ЗМІНИТИ: фон блоку, кінець градієнту */
+
+      titleColor:    "#ffffff", /* ЗМІНИТИ: колір заголовка блоку */
+      subtitleColor: "#c9c3f5", /* ЗМІНИТИ: колір підзаголовка блоку */
+
+      accentA: "#5b6bff", /* ЗМІНИТИ: перший колір прогрес-лінії/активного вузла (градієнт) */
+      accentB: "#ff4fd8", /* ЗМІНИТИ: другий колір прогрес-лінії/активного вузла (градієнт) */
+
+      lineBg:          "rgba(255,255,255,0.14)", /* ЗМІНИТИ: колір неактивної частини шкали */
+      nodeBg:           "rgba(255,255,255,0.06)", /* ЗМІНИТИ: фон неактивного вузла */
+      nodeText:         "#cfcaf0", /* ЗМІНИТИ: колір коду (A1/A2...) у неактивному вузлі */
+      nodeLabelColor:   "#8f89bd", /* ЗМІНИТИ: колір підпису (Beginner/...) під неактивним вузлом */
+
+      panelBg:          "rgba(255,255,255,0.04)", /* ЗМІНИТИ: фон панелі опису рівня */
+      panelBorder:      "rgba(255,255,255,0.10)", /* ЗМІНИТИ: рамка панелі опису рівня */
+      panelTitleColor:  "#ffffff", /* ЗМІНИТИ: колір заголовка в панелі */
+      panelTextColor:   "#b9b4dd", /* ЗМІНИТИ: колір опису в панелі */
+
+      tagBg:   "rgba(255,255,255,0.06)", /* ЗМІНИТИ: фон тегів-навичок */
+      tagText: "#d8d3ff"  /* ЗМІНИТИ: колір тексту тегів-навичок */
+    }
+  };
+
+  /* ===================== застосовуємо кольори як CSS-змінні ===================== */
+  var lvlSection = document.getElementById('engLevels');
+  lvlSection.style.setProperty('--lvl-bg-start', LVL_CONFIG.colors.bgStart);
+  lvlSection.style.setProperty('--lvl-bg-end', LVL_CONFIG.colors.bgEnd);
+  lvlSection.style.setProperty('--lvl-title-color', LVL_CONFIG.colors.titleColor);
+  lvlSection.style.setProperty('--lvl-subtitle-color', LVL_CONFIG.colors.subtitleColor);
+  lvlSection.style.setProperty('--lvl-accent-a', LVL_CONFIG.colors.accentA);
+  lvlSection.style.setProperty('--lvl-accent-b', LVL_CONFIG.colors.accentB);
+  lvlSection.style.setProperty('--lvl-line-bg', LVL_CONFIG.colors.lineBg);
+  lvlSection.style.setProperty('--lvl-node-bg', LVL_CONFIG.colors.nodeBg);
+  lvlSection.style.setProperty('--lvl-node-text', LVL_CONFIG.colors.nodeText);
+  lvlSection.style.setProperty('--lvl-node-label-color', LVL_CONFIG.colors.nodeLabelColor);
+  lvlSection.style.setProperty('--lvl-panel-bg', LVL_CONFIG.colors.panelBg);
+  lvlSection.style.setProperty('--lvl-panel-border', LVL_CONFIG.colors.panelBorder);
+  lvlSection.style.setProperty('--lvl-panel-title-color', LVL_CONFIG.colors.panelTitleColor);
+  lvlSection.style.setProperty('--lvl-panel-text-color', LVL_CONFIG.colors.panelTextColor);
+  lvlSection.style.setProperty('--lvl-tag-bg', LVL_CONFIG.colors.tagBg);
+  lvlSection.style.setProperty('--lvl-tag-text', LVL_CONFIG.colors.tagText);
+
+  /* ===================== заповнюємо заголовок/підзаголовок ===================== */
+  document.getElementById('lvlTitle').textContent = LVL_CONFIG.texts.title;
+  document.getElementById('lvlSubtitle').textContent = LVL_CONFIG.texts.subtitle;
+
+  /* ===================== будуємо вузли шкали рівнів ===================== */
+  var nodesWrap = document.getElementById('lvlNodes');
+  var lineFill = document.getElementById('lvlLineFill');
+  var levels = LVL_CONFIG.levels;
+  var activeIndex = 0;
+
+  levels.forEach(function (lvl, i) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'eng-lvl__node';
+    btn.setAttribute('data-index', i);
+
+    var dot = document.createElement('span');
+    dot.className = 'eng-lvl__node-dot';
+    dot.textContent = lvl.code;
+
+    var label = document.createElement('span');
+    label.className = 'eng-lvl__node-label';
+    label.textContent = lvl.label;
+
+    btn.appendChild(dot);
+    btn.appendChild(label);
+    btn.addEventListener('click', function () { setActive(i); });
+
+    nodesWrap.appendChild(btn);
+  });
+
+  var nodeEls = nodesWrap.querySelectorAll('.eng-lvl__node');
+
+  /* ===================== елементи панелі опису ===================== */
+  var panelEl = document.getElementById('lvlPanel');
+  var panelCode = document.getElementById('lvlPanelCode');
+  var panelTitle = document.getElementById('lvlPanelTitle');
+  var panelDuration = document.getElementById('lvlPanelDuration');
+  var panelDesc = document.getElementById('lvlPanelDesc');
+  var panelTags = document.getElementById('lvlPanelTags');
+
+  function renderPanel(i) {
+    var lvl = levels[i];
+    panelCode.textContent = lvl.code;
+    panelTitle.textContent = lvl.title;
+    panelDuration.textContent = lvl.duration;
+    panelDesc.textContent = lvl.desc;
+
+    panelTags.innerHTML = '';
+    lvl.skills.forEach(function (skill) {
+      var tag = document.createElement('span');
+      tag.className = 'eng-lvl__tag';
+      tag.textContent = skill;
+      panelTags.appendChild(tag);
+    });
+  }
+
+  function setActive(i) {
+    if (i === activeIndex && panelEl.dataset.rendered === '1') { return; }
+    activeIndex = i;
+
+    nodeEls.forEach(function (el, idx) {
+      el.classList.toggle('is-active', idx === i);
+    });
+
+    var pct = levels.length > 1 ? (i / (levels.length - 1)) * 100 : 100;
+    lineFill.style.width = pct + '%';
+
+    panelEl.classList.add('is-switching');
+    window.setTimeout(function () {
+      renderPanel(i);
+      panelEl.dataset.rendered = '1';
+      panelEl.classList.remove('is-switching');
+    }, 180);
+  }
+
+  renderPanel(0);
+  panelEl.dataset.rendered = '1';
+  nodeEls[0].classList.add('is-active');
+  window.requestAnimationFrame(function () {
+    window.setTimeout(function () {
+      panelEl.style.opacity = '1';
+      panelEl.style.transform = 'translateY(0)';
+    }, 50);
+  });
+
+  /* ===================== поява блоку при скролі ===================== */
+  var inner = document.getElementById('lvlInner');
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function revealLine() {
+    var pct = levels.length > 1 ? (activeIndex / (levels.length - 1)) * 100 : 100;
+    lineFill.style.width = pct + '%';
+  }
+
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    inner.classList.add('is-visible');
+    revealLine();
+  } else {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          window.setTimeout(revealLine, 300);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.25 });
+
+    observer.observe(inner);
+  }
+
+})();
+</script>
+
 </body>
 </html>
