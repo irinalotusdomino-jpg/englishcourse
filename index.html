@@ -1742,21 +1742,6 @@
     padding:56px 24px 80px;
     position:relative;
   }
-  @media (min-width: 900px){
-    .wrap{ max-width: 1200px; }
-    .teacher-scroll-wrap{ margin: 0; }
-    .teacher-scroll{
-      overflow-x: visible;
-      padding-left: 0;
-      padding-right: 0;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .teacher-scroll-wrap::before,
-    .teacher-scroll-wrap::after{ display:none; }
-    .teacher-card{ flex: none; }
-    .scroll-dots{ display:none; }
-  }
   .wrap::before{
     content:"";
     position:absolute;
@@ -1782,7 +1767,7 @@
     font-size:22px;
     user-select:none;
   }
-  #teachers, #reviews{ position:relative; z-index:1; font-family:'Helvetica Neue', Arial, sans-serif; text-align:center; }
+  #teachers, #reviews{ position:relative; z-index:1; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; }
   #teachers .eyebrow, #reviews .eyebrow{
     color:var(--teal,#5eead4);
     font-size:13px;
@@ -1802,7 +1787,7 @@
     color:var(--text-dim,#a99fc9);
     font-size:15.5px;
     line-height:1.5;
-    margin:0 auto 34px;
+    margin:0 0 34px;
     max-width:46ch;
   }
 
@@ -1923,6 +1908,22 @@
     border:1px solid var(--card-border,rgba(255,255,255,0.08));
     padding:4px 9px;
     border-radius:999px;
+  }
+
+  @media (min-width: 900px){
+    .wrap{ max-width: 1200px; }
+    .teacher-scroll-wrap{ margin: 0; }
+    .teacher-scroll{
+      overflow-x: visible;
+      padding-left: 0;
+      padding-right: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .teacher-scroll-wrap::before,
+    .teacher-scroll-wrap::after{ display:none; }
+    .teacher-card{ flex: none; }
+    .scroll-dots{ display:none; }
   }
 
   /* ---------- REVIEWS ---------- */
@@ -2646,6 +2647,18 @@
     color:var(--text-dim,#a99fc9);
     font-size:13.5px;
     line-height:1.6;
+  }
+
+  @media (min-width: 900px){
+    .faq-list{
+      display:block;
+      column-count:2;
+      column-gap:16px;
+    }
+    .faq-item{
+      break-inside:avoid;
+      margin-bottom:12px;
+    }
   }
 
   /* ---------- still have questions cta ---------- */
