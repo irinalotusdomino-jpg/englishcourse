@@ -2436,7 +2436,7 @@
           <li><span class="check">✓</span>Перевірка прогресу раз на місяць</li>
           <li><span class="check">✓</span>Доступ до чату групи з викладачем</li>
         </ul>
-        <a href="#signup" class="plan-btn">Обрати тариф</a>
+        <a href="#signup" class="plan-btn" data-plan="Груповий">Обрати тариф</a>
       </div>
 
       <div class="plan featured">
@@ -2460,7 +2460,7 @@
           <li><span class="check">✓</span>Зворотний зв'язок після кожного уроку</li>
           <li><span class="check">✓</span>Підтримка викладача між заняттями</li>
         </ul>
-        <a href="#signup" class="plan-btn">Обрати тариф</a>
+        <a href="#signup" class="plan-btn" data-plan="Індивідуальний">Обрати тариф</a>
       </div>
 
       <div class="plan">
@@ -2482,7 +2482,7 @@
           <li><span class="check">✓</span>Особистий куратор прогресу</li>
           <li><span class="check">✓</span>Пробне тестування рівня щомісяця</li>
         </ul>
-        <a href="#signup" class="plan-btn">Обрати тариф</a>
+        <a href="#signup" class="plan-btn" data-plan="Інтенсив">Обрати тариф</a>
       </div>
 
     </div>
@@ -2578,6 +2578,13 @@
         var price = isCoursePrice ? base * 0.85 : base;
         el.textContent = formatUAH(price);
       });
+    });
+  });
+
+  // запам'ятовуємо обраний тариф і підставляємо його у форму заявки
+  document.querySelectorAll('.plan-btn[data-plan]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      try{ sessionStorage.setItem('selectedPlan', btn.getAttribute('data-plan')); }catch(e){}
     });
   });
 })();
@@ -3175,6 +3182,16 @@
       </div>
 
       <div class="field">
+        <label for="formatSelect">Формат навчання</label>
+        <select id="formatSelect" name="format">
+          <option value="">Ще не визначився(лась)</option>
+          <option value="Груповий">Груповий — 1 490 ₴/міс</option>
+          <option value="Індивідуальний">Індивідуальний — 2 990 ₴/міс</option>
+          <option value="Інтенсив">Інтенсив — 4 990 ₴/міс</option>
+        </select>
+      </div>
+
+      <div class="field">
         <label for="levelSelect">Твій рівень англійської</label>
         <select id="levelSelect" name="level" required>
           <option value="" disabled selected>Оберіть рівень</option>
@@ -3237,7 +3254,24 @@
     { q: "14. The meeting ___ by the time I arrived.", opts: ["finished", "had finished", "has finished"], correct: 1 }
   ];
 
+  /* ===================================================================
+     КУДИ ВІДПРАВЛЯЮТЬСЯ ЗАЯВКИ (Google Таблиця + Telegram)
+     ---------------------------------------------------------------
+     1. Створіть Google Таблицю (окрему, для заявок).
+     2. У ній: Розширення → Apps Script. Видаліть будь-який код і
+        вставте вміст файлу apps-script.gs (див. інструкцію нижче).
+     3. У Apps Script замініть TELEGRAM_BOT_TOKEN і TELEGRAM_CHAT_ID
+        на свої (як їх отримати — в інструкції нижче).
+     4. Розгорнути → Нове розгортання → тип "Веб-застосунок":
+          - Виконати від імені: Мене
+          - Хто має доступ: Усі
+        Скопіюйте URL веб-застосунку і вставте його нижче замість
+        GAS_WEBAPP_URL.
+     =================================================================== */
+  var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/ВСТАВТЕ_СЮДИ_ID_РОЗГОРТАННЯ/exec';
+
   var levelSelect = document.getElementById('levelSelect');
+  var formatSelect = document.getElementById('formatSelect');
   var quizBlock = document.getElementById('quizBlock');
   var quizQuestions = document.getElementById('quizQuestions');
   var quizProgress = document.getElementById('quizProgress');
@@ -3292,6 +3326,14 @@
     var answered = document.querySelectorAll('#quizQuestions input[type="radio"]:checked').length;
     quizProgress.textContent = 'Відповіли: ' + answered + ' / ' + QUIZ.length;
   }
+
+  /* якщо користувач щойно натиснув «Обрати тариф» — підставляємо формат */
+  try{
+    var storedPlan = sessionStorage.getItem('selectedPlan');
+    if(storedPlan){
+      formatSelect.value = storedPlan;
+    }
+  }catch(e){}
 
   levelSelect.addEventListener('change', function(){
     if(levelSelect.value === 'unknown'){
@@ -3348,10 +3390,43 @@
 
     var finalLevel = levelSelect.value === 'unknown' ? computedLevel : levelSelect.value;
 
-    /* тут можна відправити дані (name, contact, finalLevel) на бекенд/CRM */
+    var payload = {
+      name: document.getElementById('signupName').value.trim(),
+      contact: document.getElementById('signupContact').value.trim(),
+      level: finalLevel,
+      format: formatSelect.value || 'Не обрано',
+      page: location.href,
+      date: new Date().toLocaleString('uk-UA')
+    };
+
     signupSubmitBtn.disabled = true;
-    signupForm.hidden = true;
-    signupSuccess.hidden = false;
+
+    function showSuccess(){
+      signupForm.hidden = true;
+      signupSuccess.hidden = false;
+      try{ sessionStorage.removeItem('selectedPlan'); }catch(e){}
+    }
+
+    if(GAS_WEBAPP_URL.indexOf('ВСТАВТЕ_СЮДИ') !== -1){
+      /* URL ще не налаштований — просто показуємо успіх, щоб форма не блокувала користувача */
+      showSuccess();
+      return;
+    }
+
+    fetch(GAS_WEBAPP_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Apps Script не віддає CORS-заголовки, тому читати відповідь не можемо
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(){ showSuccess(); })
+    .catch(function(){
+      /* навіть якщо мережевий запит не вдалося прочитати (no-cors), дані зазвичай доходять.
+         Якщо ж стався реальний збій — все одно показуємо успіх, а не лякаємо користувача,
+         але дублюємо у консоль для діагностики. */
+      console.error('Не вдалося відправити заявку на Google Apps Script');
+      showSuccess();
+    });
   });
 
 })();
