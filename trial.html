@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Запис на пробний урок — EnglishGo</title>
+<meta name="robots" content="noindex, follow">
+</head>
+<body>
+
+<a href="index.html" class="back-link">← На головну</a>
+
+<main class="trial">
+  <div class="trial__letters" id="letters"></div>
+
+  <div class="trial__card">
+    <p class="trial__eyebrow">Пробний урок</p>
+    <h1 class="trial__title">Запишись на безкоштовне заняття</h1>
+    <p class="trial__lede">Залиш контакти — підберемо викладача й підтвердимо зручний час протягом дня.</p>
+
+    <form
+      class="trial__form"
+      action="https://formsubmit.co/kirillova_irina@ukr.net"
+      method="POST"
+      id="trialForm"
+    >
+      <!-- службові поля FormSubmit -->
+      <input type="hidden" name="_subject" value="Нова заявка на пробний урок — EnglishGo">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="trial.html?sent=1">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+      <label class="trial__field">
+        <span>Ім'я</span>
+        <input type="text" name="Ім'я" placeholder="Як до вас звертатись" required>
+      </label>
+
+      <label class="trial__field">
+        <span>Телефон</span>
+        <input type="tel" name="Телефон" placeholder="+380 00 000 00 00" pattern="^[+0-9()\s-]{7,20}$" required>
+      </label>
+
+      <label class="trial__field">
+        <span>Обери дату</span>
+        <input type="date" name="Дата" required>
+      </label>
+
+      <button type="submit" class="trial__submit">Відправити заявку</button>
+
+      <p class="trial__note">Натискаючи «Відправити», ти погоджуєшся, що з тобою зв'яжуться щодо пробного уроку.</p>
+    </form>
+
+    <div class="trial__success" id="trialSuccess" hidden>
+      <div class="trial__success-icon">✓</div>
+      <h2>Заявку надіслано</h2>
+      <p>Дякуємо! Ми зв'яжемось із тобою протягом дня, щоб підтвердити час заняття.</p>
+    </div>
+  </div>
+</main>
+
+<style>
+  :root{
+    --bg-deep:#150c2b;
+    --bg-mid:#1f1440;
+    --pink:#ec4fa0;
+    --violet:#7a5cf0;
+    --teal:#5eead4;
+    --text-main:#f4f1fb;
+    --text-dim:#a99fc9;
+    --card:#241a45;
+    --card-border:rgba(255,255,255,0.08);
+    --letter:#3a2d63;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    overflow-x:hidden;
+    background:var(--bg-deep);
+    font-family:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+  }
+
+  .back-link{
+    position:fixed;
+    top:20px;
+    left:20px;
+    z-index:10;
+    color:var(--text-dim);
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+    padding:8px 14px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid var(--card-border);
+    transition:color .2s ease, background .2s ease;
+  }
+  .back-link:hover{ color:#fff; background:rgba(255,255,255,0.1); }
+
+  .trial{
+    position:relative;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:100px 20px 60px;
+    background:linear-gradient(180deg,var(--bg-deep) 0%,var(--bg-mid) 100%);
+  }
+
+  .trial__letters{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .trial__letters span{
+    position:absolute;
+    color:var(--letter);
+    font-weight:700;
+    font-size:22px;
+    user-select:none;
+  }
+
+  .trial__card{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:460px;
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:24px;
+    padding:36px 28px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.35);
+  }
+
+  .trial__eyebrow{
+    color:var(--teal);
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    margin:0 0 10px;
+  }
+
+  .trial__title{
+    font-size:26px;
+    line-height:1.2;
+    font-weight:800;
+    color:var(--text-main);
+    margin:0 0 10px;
+  }
+
+  .trial__lede{
+    color:var(--text-dim);
+    font-size:15px;
+    line-height:1.5;
+    margin:0 0 28px;
+  }
+
+  .trial__field{
+    display:block;
+    margin-bottom:16px;
+  }
+
+  .trial__field span{
+    display:block;
+    color:var(--text-dim);
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+
+  .trial__field input{
+    width:100%;
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--card-border);
+    border-radius:12px;
+    padding:13px 14px;
+    font-size:15px;
+    color:var(--text-main);
+    font-family:inherit;
+    transition:border-color .2s ease, background .2s ease;
+  }
+
+  .trial__field input::placeholder{ color:#6f6690; }
+
+  .trial__field input:focus{
+    outline:none;
+    border-color:var(--violet);
+    background:rgba(255,255,255,0.08);
+  }
+
+  /* нативний календар на темному тлі */
+  .trial__field input[type="date"]{
+    color-scheme: dark;
+  }
+
+  .trial__submit{
+    width:100%;
+    border:none;
+    cursor:pointer;
+    margin-top:6px;
+    padding:15px 20px;
+    border-radius:999px;
+    background:linear-gradient(90deg,var(--pink),var(--violet));
+    color:#fff;
+    font-weight:700;
+    font-size:15.5px;
+    font-family:inherit;
+    box-shadow:0 0 30px rgba(122,92,240,0.45);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .trial__submit:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 36px rgba(122,92,240,0.6);
+  }
+  .trial__submit:active{ transform:translateY(0); }
+
+  .trial__note{
+    margin:14px 0 0;
+    font-size:12.5px;
+    line-height:1.5;
+    color:#786f96;
+    text-align:center;
+  }
+
+  .trial__success{
+    text-align:center;
+    padding:20px 0 4px;
+  }
+  .trial__success-icon{
+    width:56px;
+    height:56px;
+    margin:0 auto 16px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--pink),var(--violet));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    color:#fff;
+  }
+  .trial__success h2{
+    color:var(--text-main);
+    font-size:22px;
+    margin:0 0 8px;
+  }
+  .trial__success p{
+    color:var(--text-dim);
+    font-size:14.5px;
+    line-height:1.5;
+    margin:0;
+  }
+
+  @media (max-width:380px){
+    .trial__title{ font-size:22px; }
+    .trial__card{ padding:28px 20px; }
+  }
+</style>
+
+<script>
+(function(){
+  // декоративні літери на фоні, як на головній сторінці
+  var letters = document.getElementById('letters');
+  var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  if (letters) {
+    for (var i = 0; i < 14; i++) {
+      var s = document.createElement('span');
+      s.textContent = alphabet[Math.floor(Math.random() * alphabet.length)];
+      s.style.top = Math.random() * 100 + '%';
+      s.style.left = Math.random() * 100 + '%';
+      s.style.fontSize = (16 + Math.random() * 14) + 'px';
+      s.style.opacity = 0.5 + Math.random() * 0.5;
+      letters.appendChild(s);
+    }
+  }
+
+  // мінімальна дата — сьогодні, щоб не можна було обрати минуле
+  var dateInput = document.querySelector('input[name="Дата"]');
+  if (dateInput) {
+    var today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+  }
+
+  // якщо форму надіслано успішно і FormSubmit повернув на ?sent=1
+  if (window.location.search.indexOf('sent=1') !== -1) {
+    var form = document.getElementById('trialForm');
+    var success = document.getElementById('trialSuccess');
+    if (form) form.hidden = true;
+    if (success) success.hidden = false;
+  }
+})();
+</script>
+
+</body>
+</html>
