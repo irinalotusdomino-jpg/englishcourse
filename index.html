@@ -136,6 +136,16 @@
 </head>
 <body style="margin:0;">
 
+<script>
+  /* ==============================================================
+     ЄДИНЕ МІСЦЕ ДЛЯ НАЛАШТУВАННЯ ВІДПРАВКИ ЗАЯВОК/ПИТАНЬ
+     Вставте сюди URL веб-застосунку Google Apps Script один раз —
+     він використовується і формою заявки, і формою "Написати нам".
+     Інструкція — у файлі apps-script.gs.
+     ============================================================== */
+  window.EGWU_GAS_URL = 'https://script.google.com/macros/s/ВСТАВТЕ_СЮДИ_ID_РОЗГОРТАННЯ/exec';
+</script>
+
 <header class="site-header" id="siteHeader">
   <div class="site-header__inner">
     <a href="#engHero" class="site-header__logo">EnglishGo</a>
@@ -2845,6 +2855,9 @@
     font-size:14.5px;
     text-decoration:none;
     box-shadow:0 0 26px rgba(122,92,240,0.4);
+    border:none;
+    cursor:pointer;
+    font-family:inherit;
   }
 
   @media(max-width:380px){
@@ -2937,10 +2950,254 @@
     <div class="cta-band">
       <h4>Залишились питання?</h4>
       <p>Напиши нам у чат — допоможемо обрати формат і рівень</p>
-      <a href="mailto:kirillova_irina@ukr.net"> class="cta-btn">Написати нам</a>
+      <button type="button" class="cta-btn" id="openQuestionModal">Написати нам</button>
     </div>
   </section>
 </div>
+
+<!-- ===== МОДАЛЬНЕ ВІКНО "НАПИСАТИ НАМ" ===== -->
+<div class="q-modal-overlay" id="questionModalOverlay" hidden>
+  <div class="q-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <button type="button" class="q-modal-close" id="questionModalClose" aria-label="Закрити">✕</button>
+
+    <div class="q-modal-body" id="questionModalBody">
+      <h3 id="questionModalTitle">Написати нам</h3>
+      <p class="q-modal-lede">Заповни форму — відповімо на пошту або в Telegram протягом робочого дня.</p>
+
+      <form id="questionForm">
+        <div class="field">
+          <label for="qName">Ім'я</label>
+          <input type="text" id="qName" name="qName" placeholder="Як до тебе звертатись?" required>
+        </div>
+
+        <div class="field">
+          <label for="qContact">Телефон або пошта</label>
+          <input type="text" id="qContact" name="qContact" placeholder="+380 ... або email@example.com" required>
+        </div>
+
+        <div class="field">
+          <label for="qMessage">Твоє питання</label>
+          <textarea id="qMessage" name="qMessage" rows="4" placeholder="Напиши своє запитання тут..." required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="questionSubmitBtn">Надіслати</button>
+      </form>
+    </div>
+
+    <div class="q-modal-success" id="questionModalSuccess" hidden>
+      <div class="check">✓</div>
+      <h4>Дякуємо! Питання надіслано</h4>
+      <p>Ми відповімо тобі на пошту або в Telegram протягом робочого дня.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .q-modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(8,5,20,0.72);
+    backdrop-filter:blur(3px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:9999;
+  }
+  .q-modal{
+    position:relative;
+    width:100%;
+    max-width:420px;
+    max-height:90vh;
+    overflow-y:auto;
+    background:var(--card,#241a45);
+    border:1px solid var(--card-border,rgba(255,255,255,0.08));
+    border-radius:22px;
+    padding:30px 24px 26px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  }
+  .q-modal-close{
+    position:absolute;
+    top:14px;
+    right:14px;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    border:1px solid var(--card-border,rgba(255,255,255,0.08));
+    background:rgba(255,255,255,0.04);
+    color:var(--text-main,#f4f1fb);
+    font-size:15px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .q-modal-close:hover{ background:rgba(255,255,255,0.1); }
+  .q-modal-body h3{
+    margin:0 0 8px;
+    font-size:21px;
+    font-weight:800;
+    color:var(--text-main,#f4f1fb);
+    padding-right:24px;
+  }
+  .q-modal-lede{
+    margin:0 0 20px;
+    color:var(--text-dim,#a99fc9);
+    font-size:13.5px;
+    line-height:1.5;
+  }
+  #questionForm{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  #questionForm .field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+  }
+  #questionForm label{
+    font-size:13px;
+    font-weight:700;
+    color:var(--text-main,#f4f1fb);
+  }
+  #questionForm input,
+  #questionForm textarea{
+    width:100%;
+    padding:12px 13px;
+    border-radius:12px;
+    border:1px solid var(--card-border,rgba(255,255,255,0.08));
+    background:rgba(255,255,255,0.04);
+    color:var(--text-main,#f4f1fb);
+    font-size:14px;
+    font-family:inherit;
+    outline:none;
+    resize:vertical;
+    transition:border-color .2s ease;
+    box-sizing:border-box;
+  }
+  #questionForm input::placeholder,
+  #questionForm textarea::placeholder{
+    color:var(--text-dim,#a99fc9);
+  }
+  #questionForm input:focus,
+  #questionForm textarea:focus{
+    border-color:var(--violet,#7a5cf0);
+  }
+  #questionForm .submit-btn{ margin-top:2px; }
+
+  .q-modal-success{
+    text-align:center;
+    padding:14px 6px 6px;
+  }
+  .q-modal-success .check{
+    width:52px;
+    height:52px;
+    margin:0 auto 14px;
+    border-radius:50%;
+    background:linear-gradient(90deg,var(--teal,#5eead4),#34d399);
+    color:#0d0720;
+    font-size:24px;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .q-modal-success h4{
+    margin:0 0 8px;
+    font-size:18px;
+    font-weight:800;
+    color:var(--text-main,#f4f1fb);
+  }
+  .q-modal-success p{
+    margin:0;
+    color:var(--text-dim,#a99fc9);
+    font-size:13.5px;
+    line-height:1.5;
+  }
+</style>
+
+<script>
+(function(){
+  var overlay      = document.getElementById('questionModalOverlay');
+  var openBtn      = document.getElementById('openQuestionModal');
+  var closeBtn     = document.getElementById('questionModalClose');
+  var body         = document.getElementById('questionModalBody');
+  var successBlock = document.getElementById('questionModalSuccess');
+  var form         = document.getElementById('questionForm');
+  var submitBtn    = document.getElementById('questionSubmitBtn');
+
+  /* той самий Apps Script веб-застосунок, що й для основної форми заявки (лід + опитування пишуться в одну таблицю/Telegram) */
+  var QUESTION_GAS_URL = window.EGWU_GAS_URL || '';
+
+  function openModal(){
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(){
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+  }
+  function resetModal(){
+    form.hidden = false;
+    body.hidden = false;
+    successBlock.hidden = true;
+    submitBtn.disabled = false;
+    form.reset();
+  }
+
+  if (openBtn) openBtn.addEventListener('click', function(){ resetModal(); openModal(); });
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e){
+    if (e.target === overlay) closeModal();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && !overlay.hidden) closeModal();
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    var payload = {
+      type: 'question',
+      name: document.getElementById('qName').value.trim(),
+      contact: document.getElementById('qContact').value.trim(),
+      message: document.getElementById('qMessage').value.trim(),
+      page: location.href,
+      date: new Date().toLocaleString('uk-UA')
+    };
+
+    submitBtn.disabled = true;
+
+    function showSuccess(){
+      body.hidden = true;
+      successBlock.hidden = false;
+    }
+
+    if (!QUESTION_GAS_URL || QUESTION_GAS_URL.indexOf('ВСТАВТЕ_СЮДИ') !== -1){
+      /* URL ще не налаштований — на випадок цього відкриваємо запасний варіант через звичайну пошту */
+      var mailBody = 'Ім\'я: ' + payload.name + '\nКонтакт: ' + payload.contact + '\n\nПитання:\n' + payload.message;
+      window.location.href = 'mailto:kirillova_irina@ukr.net?subject=' +
+        encodeURIComponent('Питання з сайту') + '&body=' + encodeURIComponent(mailBody);
+      showSuccess();
+      return;
+    }
+
+    fetch(QUESTION_GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(){ showSuccess(); })
+    .catch(function(){
+      console.error('Не вдалося надіслати питання на Google Apps Script');
+      showSuccess();
+    });
+  });
+})();
+</script>
 
 <script>
 (function(){
@@ -3358,18 +3615,11 @@
   /* ===================================================================
      КУДИ ВІДПРАВЛЯЮТЬСЯ ЗАЯВКИ (Google Таблиця + Telegram)
      ---------------------------------------------------------------
-     1. Створіть Google Таблицю (окрему, для заявок).
-     2. У ній: Розширення → Apps Script. Видаліть будь-який код і
-        вставте вміст файлу apps-script.gs (див. інструкцію нижче).
-     3. У Apps Script замініть TELEGRAM_BOT_TOKEN і TELEGRAM_CHAT_ID
-        на свої (як їх отримати — в інструкції нижче).
-     4. Розгорнути → Нове розгортання → тип "Веб-застосунок":
-          - Виконати від імені: Мене
-          - Хто має доступ: Усі
-        Скопіюйте URL веб-застосунку і вставте його нижче замість
-        GAS_WEBAPP_URL.
+     URL веб-застосунку налаштовується один раз — на самому початку
+     файлу, у змінній window.EGWU_GAS_URL (одразу після <body>).
+     Інструкція зі створення — у файлі apps-script.gs.
      =================================================================== */
-  var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/ВСТАВТЕ_СЮДИ_ID_РОЗГОРТАННЯ/exec';
+  var GAS_WEBAPP_URL = window.EGWU_GAS_URL || '';
 
   var levelSelect = document.getElementById('levelSelect');
   var formatSelect = document.getElementById('formatSelect');
@@ -3497,6 +3747,7 @@
     var finalLevel = levelSelect.value === 'unknown' ? computedLevel : levelSelect.value;
 
     var payload = {
+      type: 'lead',
       name: document.getElementById('signupName').value.trim(),
       contact: document.getElementById('signupContact').value.trim(),
       level: finalLevel,
@@ -3513,7 +3764,7 @@
       try{ sessionStorage.removeItem('selectedPlan'); }catch(e){}
     }
 
-    if(GAS_WEBAPP_URL.indexOf('ВСТАВТЕ_СЮДИ') !== -1){
+    if(!GAS_WEBAPP_URL || GAS_WEBAPP_URL.indexOf('ВСТАВТЕ_СЮДИ') !== -1){
       /* URL ще не налаштований — просто показуємо успіх, щоб форма не блокувала користувача */
       showSuccess();
       return;
