@@ -1775,20 +1775,23 @@
     letter-spacing:.14em;
     text-transform:uppercase;
     margin:0 0 10px;
+    text-align:center;
   }
   #teachers h2, #reviews h2{
-    font-size:30px;
+    font-size:clamp(28px, 4.5vw, 44px);
     line-height:1.15;
-    margin:0 0 12px;
+    margin:0 0 14px;
     font-weight:800;
+    text-align:center;
     color:var(--text-main,#f4f1fb);
   }
   #teachers .lede, #reviews .lede{
     color:var(--text-dim,#a99fc9);
-    font-size:15.5px;
+    font-size:clamp(15px, 2vw, 18px);
     line-height:1.5;
-    margin:0 0 34px;
-    max-width:46ch;
+    margin:0 auto 34px;
+    max-width:620px;
+    text-align:center;
   }
 
   /* ---------- TEACHERS ---------- */
@@ -2144,20 +2147,23 @@
     letter-spacing:.14em;
     text-transform:uppercase;
     margin:0 0 10px;
+    text-align:center;
   }
   #pricing h2, #included h2{
-    font-size:30px;
+    font-size:clamp(28px, 4.5vw, 44px);
     line-height:1.15;
-    margin:0 0 12px;
+    margin:0 0 14px;
     font-weight:800;
+    text-align:center;
     color:var(--text-main,#f4f1fb);
   }
   #pricing .lede, #included .lede{
     color:var(--text-dim,#a99fc9);
-    font-size:15.5px;
+    font-size:clamp(15px, 2vw, 18px);
     line-height:1.5;
-    margin:0 0 34px;
-    max-width:46ch;
+    margin:0 auto 34px;
+    max-width:620px;
+    text-align:center;
   }
 
   /* ---------- billing toggle ---------- */
@@ -2317,6 +2323,31 @@
     box-shadow:0 0 24px rgba(122,92,240,0.4);
   }
 
+  /* ---------- compact desktop layout for pricing cards ---------- */
+  @media (min-width:900px){
+    .plans{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+    }
+    .plan{
+      padding:20px 18px;
+      display:flex;
+      flex-direction:column;
+    }
+    .plan-name{ font-size:15.5px; }
+    .plan-for{ font-size:11.5px; margin:3px 0 12px; }
+    .plan-price .amount{ font-size:24px; }
+    .plan-price .period{ font-size:11.5px; }
+    .plan-old{ font-size:11.5px; margin:0 0 12px; }
+    .plan hr{ margin:12px 0; }
+    .features{ gap:8px; margin:0 0 16px; flex:1; }
+    .features li{ font-size:12px; gap:8px; }
+    .features li .check{ width:16px; height:16px; flex:0 0 16px; font-size:10px; }
+    .plan-btn{ padding:11px; font-size:13px; margin-top:auto; }
+    .badge{ font-size:10px; padding:4px 12px; top:-11px; }
+  }
+
   /* ---------- what's included ---------- */
   .included{
     margin-top:56px;
@@ -2395,7 +2426,7 @@
           </div>
         </div>
         <div class="plan-price">
-          <span class="amount">1 490 ₴</span>
+          <span class="amount" data-base="1490">1 490 ₴</span>
           <span class="period">/ місяць</span>
         </div>
         <hr>
@@ -2417,7 +2448,7 @@
           </div>
         </div>
         <div class="plan-price">
-          <span class="amount">2 990 ₴</span>
+          <span class="amount" data-base="2990">2 990 ₴</span>
           <span class="period">/ місяць</span>
         </div>
         <p class="plan-old">3 490 ₴</p>
@@ -2440,7 +2471,7 @@
           </div>
         </div>
         <div class="plan-price">
-          <span class="amount">4 990 ₴</span>
+          <span class="amount" data-base="4990">4 990 ₴</span>
           <span class="period">/ місяць</span>
         </div>
         <hr>
@@ -2530,11 +2561,23 @@
     container.appendChild(el);
   }
 
-  // toggle interaction
-  document.querySelectorAll('.toggle button').forEach(btn=>{
+  // toggle interaction — recalculates plan prices by -15% for "На курс"
+  function formatUAH(n){
+    return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₴';
+  }
+
+  var toggleButtons = document.querySelectorAll('.toggle button');
+  toggleButtons.forEach((btn, idx)=>{
     btn.addEventListener('click', ()=>{
-      document.querySelectorAll('.toggle button').forEach(b=>b.classList.remove('active'));
+      toggleButtons.forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
+
+      var isCoursePrice = idx === 1; // друга кнопка — "На курс −15%"
+      document.querySelectorAll('#pricing .plan-price .amount[data-base]').forEach(function(el){
+        var base = parseFloat(el.getAttribute('data-base'));
+        var price = isCoursePrice ? base * 0.85 : base;
+        el.textContent = formatUAH(price);
+      });
     });
   });
 })();
@@ -2550,20 +2593,23 @@
     letter-spacing:.14em;
     text-transform:uppercase;
     margin:0 0 10px;
+    text-align:center;
   }
   #faq h2{
-    font-size:30px;
+    font-size:clamp(28px, 4.5vw, 44px);
     line-height:1.15;
-    margin:0 0 12px;
+    margin:0 0 14px;
     font-weight:800;
+    text-align:center;
     color:var(--text-main,#f4f1fb);
   }
   #faq .lede{
     color:var(--text-dim,#a99fc9);
-    font-size:15.5px;
+    font-size:clamp(15px, 2vw, 18px);
     line-height:1.5;
-    margin:0 0 32px;
-    max-width:46ch;
+    margin:0 auto 32px;
+    max-width:620px;
+    text-align:center;
   }
 
   /* ---------- FAQ accordion ---------- */
@@ -3286,6 +3332,9 @@
     quizScoreText.textContent = 'Правильних відповідей: ' + score + ' / ' + QUIZ.length;
     quizLevelDesc.textContent = result.desc;
     quizResult.hidden = false;
+
+    /* автоматично підставляємо визначений рівень у поле вибору вище */
+    levelSelect.value = result.code;
   });
 
   signupForm.addEventListener('submit', function(e){
