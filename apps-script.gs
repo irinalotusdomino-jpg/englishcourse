@@ -47,8 +47,8 @@
  * ============================================================
  */
 
-var TELEGRAM_BOT_TOKEN = 'ВСТАВТЕ_ТОКЕН_БОТА';
-var TELEGRAM_CHAT_ID   = 'ВСТАВТЕ_CHAT_ID';
+var TELEGRAM_BOT_TOKEN = '5597429243';
+var TELEGRAM_CHAT_ID   = 'AAE-EXwjKkGqQsxlgLDQgb6_hpGZEjI8-tQ';
 
 function doPost(e) {
   try {
