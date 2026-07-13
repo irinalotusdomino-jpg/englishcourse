@@ -159,6 +159,7 @@
 
 <style>
   html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+  html, body { max-width: 100%; overflow-x: hidden; background: #150c2b; }
 
   .site-header {
     position: fixed;
@@ -172,6 +173,10 @@
     border-bottom: 1px solid rgba(255,255,255,0.08);
     transition: background 0.3s ease, box-shadow 0.3s ease;
     font-family: 'Helvetica Neue', Arial, sans-serif;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
   }
 
   .site-header.is-scrolled {
@@ -334,6 +339,7 @@
     position: relative;
     width: 100%;
     height: 100vh;
+    height: 100dvh;
     min-height: 560px;
     overflow: hidden;
     background: linear-gradient(160deg, var(--eng-bg-start) 0%, var(--eng-bg-end) 100%);
@@ -1735,6 +1741,21 @@
     margin:0 auto;
     padding:56px 24px 80px;
     position:relative;
+  }
+  @media (min-width: 900px){
+    .wrap{ max-width: 1200px; }
+    .teacher-scroll-wrap{ margin: 0; }
+    .teacher-scroll{
+      overflow-x: visible;
+      padding-left: 0;
+      padding-right: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .teacher-scroll-wrap::before,
+    .teacher-scroll-wrap::after{ display:none; }
+    .teacher-card{ flex: none; }
+    .scroll-dots{ display:none; }
   }
   .wrap::before{
     content:"";
