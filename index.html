@@ -319,7 +319,7 @@
       <p class="eng-hero__subtitle" id="engSubtitle"></p>
       <div class="eng-hero__buttons">
         <a href="#" class="eng-btn eng-btn--primary" id="engBtn1" target="_blank" rel="noopener"></a>
-        <a href="#" class="eng-btn eng-btn--ghost" id="engBtn2" target="_blank" rel="noopener"></a>
+        <a href="#" class="eng-btn eng-btn--ghost" id="engBtn2"></a>
       </div>
     </div>
 
@@ -563,7 +563,7 @@
       button1Link: "#start",          /* ЗМІНИТИ: посилання кнопки 1 */
 
       button2Text: "Пробний урок безкоштовно", /* ЗМІНИТИ: текст кнопки 2 */
-      button2Link: "#trial"                    /* ЗМІНИТИ: посилання кнопки 2 */
+      button2Link: "trial.html"                /* ЗМІНИТИ: посилання кнопки 2 */
     },
 
     colors: {
@@ -1782,7 +1782,7 @@
     font-size:22px;
     user-select:none;
   }
-  #teachers, #reviews{ position:relative; z-index:1; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; }
+  #teachers, #reviews{ position:relative; z-index:1; font-family:'Helvetica Neue', Arial, sans-serif; text-align:center; }
   #teachers .eyebrow, #reviews .eyebrow{
     color:var(--teal,#5eead4);
     font-size:13px;
@@ -1802,7 +1802,7 @@
     color:var(--text-dim,#a99fc9);
     font-size:15.5px;
     line-height:1.5;
-    margin:0 0 34px;
+    margin:0 auto 34px;
     max-width:46ch;
   }
 
@@ -1941,6 +1941,7 @@
     border-radius:20px;
     padding:22px 20px;
     margin-bottom:16px;
+    text-align:left;
   }
   .review-quote{
     font-size:14.5px;
@@ -2011,10 +2012,8 @@
 
   <!-- ===== TEACHERS ===== -->
   <section id="teachers">
-        texts: {
-      title: "Наша команда", /* ЗМІНИТИ: заголовок блоку */
-      subtitle: "Викладачі, з якими хочеться говорити" /* ЗМІНИТИ: підзаголовок блоку */
-    },
+    <p class="eyebrow">Наша команда</p>
+    <h2>Викладачі, з якими хочеться говорити</h2>
     <p class="lede">Носії мови та сертифіковані викладачі, які вміють захопити й пояснити складне просто.</p>
 
     <div class="teacher-scroll-wrap">
@@ -2092,7 +2091,7 @@
     </div>
 
     <div class="cta-band">
-      <a href="#" class="cta-btn">Пробний урок безкоштовно</a>
+      <a href="trial.html" class="cta-btn">Пробний урок безкоштовно</a>
     </div>
   </section>
 </div>
