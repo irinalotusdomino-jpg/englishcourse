@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Курс англійської мови — від літер до вільної розмови</title>
+<meta name="description" content="Онлайн-курс англійської мови: від окремих слів до вільної розмови">
+</head>
+<body style="margin:0;">
+
+<div class="eng-hero" id="engHero">
+
+  <canvas class="eng-hero__canvas" id="engCanvas"></canvas>
+
+  <div class="eng-hero__overlay">
+
+    <div class="eng-hero__word" id="engWord"></div>
+
+    <div class="eng-hero__sentence" id="engSentence"></div>
+
+    <div class="eng-hero__dialog" id="engDialog">
+      <div class="eng-bubble eng-bubble--left" id="engBubble1"></div>
+      <div class="eng-bubble eng-bubble--right" id="engBubble2"></div>
+    </div>
+
+    <div class="eng-hero__content" id="engContent">
+      <h1 class="eng-hero__title" id="engTitle"></h1>
+      <p class="eng-hero__subtitle" id="engSubtitle"></p>
+      <div class="eng-hero__buttons">
+        <a href="#" class="eng-btn eng-btn--primary" id="engBtn1" target="_blank" rel="noopener"></a>
+        <a href="#" class="eng-btn eng-btn--ghost" id="engBtn2" target="_blank" rel="noopener"></a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="eng-hero__scroll" id="engScroll">
+    <span></span>
+  </div>
+
+</div>
+
+<style>
+
+  #engHero, #engHero * { box-sizing: border-box; }
+
+  .eng-hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 560px;
+    overflow: hidden;
+    background: linear-gradient(160deg, var(--eng-bg-start) 0%, var(--eng-bg-end) 100%);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .eng-hero__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .eng-hero__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+    pointer-events: none;
+  }
+
+  /* -------- слово (BOOK / FLIGHT / COFFEE...) -------- */
+  .eng-hero__word {
+    position: absolute;
+    font-weight: 800;
+    letter-spacing: 6px;
+    font-size: clamp(28px, 6vw, 64px);
+    color: var(--eng-accent1);
+    text-shadow: 0 0 30px var(--eng-accent1);
+    opacity: 0;
+    transform: scale(0.7);
+  }
+
+  /* -------- речення (підзаголовок, що збирається зі слів) -------- */
+  .eng-hero__sentence {
+    position: absolute;
+    max-width: 720px;
+    font-weight: 500;
+    font-size: clamp(18px, 3vw, 30px);
+    color: #ffffff;
+    opacity: 0;
+    padding: 0 16px;
+  }
+
+  /* -------- діалог (дві репліки) -------- */
+  .eng-hero__dialog {
+    position: absolute;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 0 16px;
+  }
+
+  .eng-bubble {
+    padding: 12px 18px;
+    border-radius: 18px;
+    font-size: clamp(14px, 2.2vw, 18px);
+    font-weight: 500;
+    color: #ffffff;
+    max-width: 78%;
+    opacity: 0;
+    transform: translateY(14px) scale(0.9);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  }
+
+  .eng-bubble--left {
+    align-self: flex-start;
+    background: var(--eng-bubble1-bg);
+    border-bottom-left-radius: 4px;
+  }
+
+  .eng-bubble--right {
+    align-self: flex-end;
+    background: var(--eng-bubble2-bg);
+    border-bottom-right-radius: 4px;
+  }
+
+  /* -------- фінальний контент -------- */
+  .eng-hero__content {
+    position: relative;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    pointer-events: auto;
+  }
+
+  .eng-hero__title {
+    margin: 0;
+    font-weight: 800;
+    line-height: 1.1;
+    font-size: clamp(32px, 6vw, 68px);
+    color: var(--eng-title-color);
+    text-shadow: 0 0 40px rgba(255,255,255,0.15);
+    max-width: 900px;
+  }
+
+  .eng-hero__subtitle {
+    margin: 0;
+    font-weight: 400;
+    font-size: clamp(16px, 2.4vw, 22px);
+    color: var(--eng-subtitle-color);
+    max-width: 640px;
+  }
+
+  .eng-hero__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .eng-btn {
+    display: inline-block;
+    padding: 16px 36px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+    border: 2px solid transparent;
+    white-space: nowrap;
+  }
+
+  .eng-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+  }
+
+  .eng-btn--primary {
+    background: var(--eng-btn1-bg);
+    color: var(--eng-btn1-text) !important;
+    box-shadow: 0 8px 26px var(--eng-btn1-glow);
+  }
+
+  .eng-btn--primary:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 12px 34px var(--eng-btn1-glow);
+  }
+
+  .eng-btn--ghost {
+    background: transparent;
+    color: var(--eng-btn2-text) !important;
+    border: 2px solid var(--eng-btn2-border);
+  }
+
+  .eng-btn--ghost:hover {
+    background: var(--eng-btn2-border);
+    color: var(--eng-btn2-hover-text) !important;
+  }
+
+  .eng-hero__scroll {
+    position: absolute;
+    bottom: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 26px;
+    height: 42px;
+    border: 2px solid rgba(255,255,255,0.5);
+    border-radius: 14px;
+    opacity: 0;
+  }
+
+  .eng-hero__scroll span {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 4px;
+    height: 8px;
+    margin-left: -2px;
+    border-radius: 2px;
+    background: #ffffff;
+    animation: engScrollDot 1.6s infinite ease;
+  }
+
+  @keyframes engScrollDot {
+    0%   { top: 6px; opacity: 1; }
+    70%  { top: 20px; opacity: 0; }
+    100% { top: 20px; opacity: 0; }
+  }
+
+  @media (max-width: 680px) {
+    .eng-hero__buttons { flex-direction: column; width: 100%; max-width: 320px; }
+    .eng-btn { width: 100%; text-align: center; padding: 15px 20px; }
+    .eng-hero__dialog { max-width: 90%; }
+  }
+
+</style>
+
+<script>
+(function () {
+
+  /* =====================================================================
+     CONFIG — ВСІ ТЕКСТИ, ПОСИЛАННЯ ТА КОЛЬОРИ МІНЯЄШ ТІЛЬКИ ТУТ
+     ===================================================================== */
+  var CONFIG = {
+
+    texts: {
+      title: "Заговори англійською вільно і з задоволенням", /* ЗМІНИТИ: головний заголовок */
+      subtitle: "Від окремих літер — до слів, від слів — до живої розмови без страху та зайвих пауз", /* ЗМІНИТИ: підзаголовок / "речення", яке збирається зі слів */
+
+      /* слова, які по черзі з'являються з предметів (книга/літак/кава) */
+      word1: "BOOK",   /* ЗМІНИТИ: слово-предмет 1 */
+      word2: "FLIGHT", /* ЗМІНИТИ: слово-предмет 2 */
+      word3: "COFFEE", /* ЗМІНИТИ: слово-предмет 3 */
+      word4: "TALK",   /* ЗМІНИТИ: підсумкове слово перед реченням */
+
+      dialogLine1: "Hello! How are you today?", /* ЗМІНИТИ: репліка діалогу 1 */
+      dialogLine2: "I'm great, let's talk!",     /* ЗМІНИТИ: репліка діалогу 2 */
+
+      button1Text: "Почати говорити", /* ЗМІНИТИ: текст кнопки 1 */
+      button1Link: "#start",          /* ЗМІНИТИ: посилання кнопки 1 */
+
+      button2Text: "Пробний урок безкоштовно", /* ЗМІНИТИ: текст кнопки 2 */
+      button2Link: "#trial"                    /* ЗМІНИТИ: посилання кнопки 2 */
+    },
+
+    colors: {
+      bgGradientStart: "#0b0620", /* ЗМІНИТИ: колір фону, початок градієнту */
+      bgGradientEnd:   "#1a0b45", /* ЗМІНИТИ: колір фону, кінець градієнту */
+
+      letterColor:       "#5b6bff", /* ЗМІНИТИ: колір фонових (амбієнтних) літер */
+      letterAccentColor: "#ff4fd8", /* ЗМІНИТИ: колір літер, що збираються у предмети */
+
+      wordColor:      "#5bffe0", /* ЗМІНИТИ: колір слова (BOOK/FLIGHT/COFFEE...) */
+      titleColor:      "#ffffff", /* ЗМІНИТИ: колір головного заголовка */
+      subtitleColor:   "#d8d3ff", /* ЗМІНИТИ: колір підзаголовка */
+
+      bubble1Bg: "#3a2bb8", /* ЗМІНИТИ: колір репліки діалогу 1 */
+      bubble2Bg: "#ff4fd8", /* ЗМІНИТИ: колір репліки діалогу 2 */
+
+      button1Bg:   "linear-gradient(90deg,#ff4fd8,#5b6bff)", /* ЗМІНИТИ: фон кнопки 1 (можна градієнт) */
+      button1Text: "#ffffff", /* ЗМІНИТИ: колір тексту кнопки 1 (важливо: із !important, бо Tilda фарбує посилання в оранжевий) */
+      button1Glow: "rgba(255,79,216,0.45)", /* ЗМІНИТИ: колір світіння кнопки 1 */
+
+      button2Border:    "#5bffe0", /* ЗМІНИТИ: колір рамки кнопки 2 */
+      button2Text:      "#5bffe0", /* ЗМІНИТИ: колір тексту кнопки 2 */
+      button2HoverText: "#0b0620"  /* ЗМІНИТИ: колір тексту кнопки 2 при наведенні */
+    },
+
+    /* налаштування 3D-сцени */
+    scene: {
+      ambientLettersDesktop: 260, /* ЗМІНИТИ: кількість фонових літер (десктоп) */
+      ambientLettersMobile:  110, /* ЗМІНИТИ: кількість фонових літер (мобільні) */
+      assemblyLettersCount:  60,  /* ЗМІНИТИ: скільки літер збирається у предмети */
+      cameraStartZ: 900,   /* ЗМІНИТИ: стартова відстань камери (політ здалеку) */
+      cameraEndZ: 260,     /* ЗМІНИТИ: кінцева відстань камери */
+      introTotalSeconds: 9 /* ЗМІНИТИ: загальна тривалість вступної анімації, сек */
+    }
+  };
+
+  /* ===================== застосовуємо кольори як CSS-змінні ===================== */
+  var hero = document.getElementById('engHero');
+  hero.style.setProperty('--eng-bg-start', CONFIG.colors.bgGradientStart);
+  hero.style.setProperty('--eng-bg-end', CONFIG.colors.bgGradientEnd);
+  hero.style.setProperty('--eng-accent1', CONFIG.colors.wordColor);
+  hero.style.setProperty('--eng-title-color', CONFIG.colors.titleColor);
+  hero.style.setProperty('--eng-subtitle-color', CONFIG.colors.subtitleColor);
+  hero.style.setProperty('--eng-bubble1-bg', CONFIG.colors.bubble1Bg);
+  hero.style.setProperty('--eng-bubble2-bg', CONFIG.colors.bubble2Bg);
+  hero.style.setProperty('--eng-btn1-bg', CONFIG.colors.button1Bg);
+  hero.style.setProperty('--eng-btn1-text', CONFIG.colors.button1Text);
+  hero.style.setProperty('--eng-btn1-glow', CONFIG.colors.button1Glow);
+  hero.style.setProperty('--eng-btn2-border', CONFIG.colors.button2Border);
+  hero.style.setProperty('--eng-btn2-text', CONFIG.colors.button2Text);
+  hero.style.setProperty('--eng-btn2-hover-text', CONFIG.colors.button2HoverText);
+
+  /* ===================== заповнюємо тексти ===================== */
+  document.getElementById('engSentence').textContent = CONFIG.texts.subtitle;
+  document.getElementById('engBubble1').textContent = CONFIG.texts.dialogLine1;
+  document.getElementById('engBubble2').textContent = CONFIG.texts.dialogLine2;
+  document.getElementById('engTitle').textContent = CONFIG.texts.title;
+  document.getElementById('engSubtitle').textContent = CONFIG.texts.subtitle;
+
+  var btn1 = document.getElementById('engBtn1');
+  btn1.textContent = CONFIG.texts.button1Text;
+  btn1.setAttribute('href', CONFIG.texts.button1Link);
+
+  var btn2 = document.getElementById('engBtn2');
+  btn2.textContent = CONFIG.texts.button2Text;
+  btn2.setAttribute('href', CONFIG.texts.button2Link);
+
+  /* ===================== динамічне підвантаження Three.js та GSAP ===================== */
+  function loadScript(src, cb) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = cb;
+    document.head.appendChild(s);
+  }
+
+  function startWhenReady() {
+    if (window.THREE && window.gsap) {
+      initEngHero();
+    } else {
+      loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js', function () {
+        loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js', initEngHero);
+      });
+    }
+  }
+
+  startWhenReady();
+
+  /* ===================== основна логіка сцени ===================== */
+  function initEngHero() {
+
+    var canvas = document.getElementById('engCanvas');
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var isMobile = window.innerWidth < 700;
+
+    var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(60, hero.clientWidth / hero.clientHeight, 1, 3000);
+    camera.position.set(0, 0, CONFIG.scene.cameraStartZ);
+
+    function resize() {
+      var w = hero.clientWidth, h = hero.clientHeight;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    /* -------- створюємо текстури літер A-Z (одна текстура на літеру, колір задається через material.color) -------- */
+    var ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var letterTextures = {};
+
+    ALPHABET.split('').forEach(function (ch) {
+      var c = document.createElement('canvas');
+      c.width = 64; c.height = 64;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 46px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(ch, 32, 34);
+      var tex = new THREE.CanvasTexture(c);
+      letterTextures[ch] = tex;
+    });
+
+    function randomLetter() {
+      return ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
+    }
+
+    function makeSprite(letter, colorHex, opacity, size) {
+      var mat = new THREE.SpriteMaterial({
+        map: letterTextures[letter],
+        color: colorHex,
+        transparent: true,
+        opacity: opacity,
+        depthTest: false
+      });
+      var spr = new THREE.Sprite(mat);
+      spr.scale.set(size, size, 1);
+      return spr;
+    }
+
+    /* -------- амбієнтна хмара літер (тисячі літер, крізь які летить камера) -------- */
+    var ambientCount = isMobile ? CONFIG.scene.ambientLettersMobile : CONFIG.scene.ambientLettersDesktop;
+    var ambientLetters = [];
+
+    for (var i = 0; i < ambientCount; i++) {
+      var spr = makeSprite(
+        randomLetter(),
+        CONFIG.colors.letterColor,
+        0.25 + Math.random() * 0.5,
+        14 + Math.random() * 20
+      );
+      spr.position.set(
+        (Math.random() - 0.5) * 900,
+        (Math.random() - 0.5) * 600,
+        -Math.random() * 1400
+      );
+      spr.userData.speed = 1.2 + Math.random() * 2.4;
+      scene.add(spr);
+      ambientLetters.push(spr);
+    }
+
+    /* -------- допоміжні функції для побудови силуетів предметів -------- */
+    function samplePolyline(verts, n) {
+      var segs = [], total = 0, i;
+      for (i = 0; i < verts.length - 1; i++) {
+        var dx = verts[i + 1][0] - verts[i][0];
+        var dy = verts[i + 1][1] - verts[i][1];
+        var len = Math.sqrt(dx * dx + dy * dy);
+        segs.push({ len: len, dx: dx, dy: dy, x0: verts[i][0], y0: verts[i][1] });
+        total += len;
+      }
+      var pts = [];
+      for (i = 0; i < n; i++) {
+        var d = (i / n) * total, acc = 0, seg = segs[0];
+        for (var j = 0; j < segs.length; j++) {
+          if (d <= acc + segs[j].len) { seg = segs[j]; break; }
+          acc += segs[j].len;
+        }
+        var t = seg.len ? (d - acc) / seg.len : 0;
+        pts.push({ x: seg.x0 + seg.dx * t, y: seg.y0 + seg.dy * t });
+      }
+      return pts;
+    }
+
+    function shapeFromParts(parts, total) {
+      var per = Math.floor(total / parts.length);
+      var pts = [];
+      parts.forEach(function (p) { pts = pts.concat(samplePolyline(p, per)); });
+      while (pts.length < total) pts.push(pts[pts.length - 1] || { x: 0, y: 0 });
+      return pts;
+    }
+
+    var N = CONFIG.scene.assemblyLettersCount;
+
+    /* книга (розгорнута, вигляд збоку) */
+    var bookShape = shapeFromParts([
+      [[-100, -60], [0, -38], [100, -60], [100, 60], [0, 38], [-100, 60], [-100, -60]]
+    ], N);
+
+    /* паперовий літак */
+    var planeShape = shapeFromParts([
+      [[0, 85], [72, -70], [0, -30], [-72, -70], [0, 85]]
+    ], N);
+
+    /* чашка кави (тіло + блюдце) */
+    var coffeeShape = shapeFromParts([
+      [[-46, 62], [46, 62], [38, -58], [-38, -58], [-46, 62]],
+      [[-68, -70], [68, -70]]
+    ], N);
+
+    var shapes = [bookShape, planeShape, coffeeShape];
+
+    /* -------- літери, що збираються у предмети -------- */
+    var assemblyLetters = [];
+    for (i = 0; i < N; i++) {
+      var aspr = makeSprite(
+        randomLetter(),
+        CONFIG.colors.letterAccentColor,
+        0,
+        18 + Math.random() * 10
+      );
+      aspr.position.set(
+        (Math.random() - 0.5) * 500,
+        (Math.random() - 0.5) * 350,
+        -200 - Math.random() * 300
+      );
+      scene.add(aspr);
+      assemblyLetters.push(aspr);
+    }
+
+    /* -------- рендер-цикл (постійний, працює завжди) -------- */
+    var mouseX = 0, mouseY = 0;
+    hero.addEventListener('mousemove', function (e) {
+      var r = hero.getBoundingClientRect();
+      mouseX = ((e.clientX - r.left) / r.width - 0.5);
+      mouseY = ((e.clientY - r.top) / r.height - 0.5);
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      ambientLetters.forEach(function (s) {
+        s.position.z += s.userData.speed;
+        if (s.position.z > camera.position.z - 20) {
+          s.position.z = -1400;
+          s.position.x = (Math.random() - 0.5) * 900;
+          s.position.y = (Math.random() - 0.5) * 600;
+        }
+      });
+
+      camera.position.x += (mouseX * 40 - camera.position.x) * 0.03;
+      camera.position.y += (-mouseY * 30 - camera.position.y) * 0.03;
+      camera.lookAt(0, 0, -100);
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    /* -------- елементи DOM для тексту-послідовності -------- */
+    var wordEl = document.getElementById('engWord');
+    var sentenceEl = document.getElementById('engSentence');
+    var dialogEl = document.getElementById('engDialog');
+    var bubble1 = document.getElementById('engBubble1');
+    var bubble2 = document.getElementById('engBubble2');
+    var contentEl = document.getElementById('engContent');
+    var scrollEl = document.getElementById('engScroll');
+
+    var words = [CONFIG.texts.word1, CONFIG.texts.word2, CONFIG.texts.word3, CONFIG.texts.word4];
+
+    if (reduceMotion) {
+      /* -------- спрощений режим для людей, що не бажають анімації -------- */
+      camera.position.z = CONFIG.scene.cameraEndZ;
+      gsap.set(assemblyLetters.map(function (s) { return s.material; }), { opacity: 0 });
+      gsap.to(contentEl, { opacity: 1, duration: 0.8 });
+      gsap.to(scrollEl, { opacity: 1, duration: 0.8, delay: 0.8 });
+      return;
+    }
+
+    /* -------- головна GSAP-таймлінія -------- */
+    var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    /* 1. Камера летить крізь хмару літер */
+    tl.to(camera.position, { z: CONFIG.scene.cameraEndZ, duration: 2.2, ease: 'power2.in' }, 0);
+
+    /* показуємо assembly-літери */
+    tl.to(assemblyLetters.map(function (s) { return s.material; }), {
+      opacity: 1, duration: 0.6, stagger: 0.01
+    }, 1.2);
+
+    /* 2. Літери збираються у предмети по черзі, з появою слова під кожним */
+    var t = 1.9;
+    shapes.forEach(function (shapePts, idx) {
+      assemblyLetters.forEach(function (s, li) {
+        var p = shapePts[li % shapePts.length];
+        tl.to(s.position, { x: p.x, y: p.y, z: -40, duration: 0.9, ease: 'power3.out' }, t);
+        tl.to(s.rotation, { z: Math.random() * 1.4 - 0.7, duration: 0.9 }, t);
+      });
+
+      tl.call(function () { wordEl.textContent = words[idx]; }, null, t + 0.5);
+      tl.to(wordEl, { opacity: 1, scale: 1, duration: 0.4 }, t + 0.55);
+      tl.to(wordEl, { opacity: 0, scale: 0.7, duration: 0.3 }, t + 1.15);
+
+      t += 1.6;
+    });
+
+    /* 3. Останнє слово ("TALK") утримується довше і веде у речення */
+    tl.call(function () { wordEl.textContent = words[3]; }, null, t);
+    tl.to(wordEl, { opacity: 1, scale: 1, duration: 0.4 }, t + 0.05);
+
+    tl.to(assemblyLetters.map(function (s) { return s.material; }), {
+      opacity: 0, duration: 0.5, stagger: 0.01
+    }, t + 0.6);
+
+    tl.to(wordEl, { opacity: 0, scale: 1.4, duration: 0.5 }, t + 0.9);
+
+    /* 4. Слово перетворюється на речення (підзаголовок) */
+    tl.fromTo(sentenceEl, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.8 }, t + 1.2);
+    tl.to(sentenceEl, { opacity: 0, y: -20, duration: 0.6 }, t + 2.6);
+
+    /* 5. Речення перетворюється на діалог (дві репліки) */
+    tl.to(bubble1, { opacity: 1, y: 0, scale: 1, duration: 0.5 }, t + 3.0);
+    tl.to(bubble2, { opacity: 1, y: 0, scale: 1, duration: 0.5 }, t + 3.4);
+    tl.to([bubble1, bubble2], { opacity: 0, duration: 0.5 }, t + 4.4);
+
+    /* 6. Діалог перетворюється на фінальний контент з кнопками */
+    tl.to(contentEl, { opacity: 1, duration: 0.9 }, t + 4.8);
+    tl.to(scrollEl, { opacity: 1, duration: 0.6 }, t + 5.4);
+
+  } // end initEngHero
+
+})();
+</script>
+
+</body>
+</html>
