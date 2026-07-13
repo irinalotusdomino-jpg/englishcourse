@@ -2303,7 +2303,7 @@
     font-weight:900;
     margin-top:1px;
   }
-  .plan-btn{
+.plan-btn{
     display:block;
     text-align:center;
     width:100%;
@@ -2316,6 +2316,7 @@
     color:var(--text-main,#f4f1fb);
     background:rgba(255,255,255,0.03);
   }
+
   .plan.featured .plan-btn{
     background:linear-gradient(90deg,var(--pink,#ec4fa0),var(--violet,#7a5cf0));
     color:#fff;
@@ -2578,7 +2579,7 @@
         var price = isCoursePrice ? base * 0.85 : base;
         el.textContent = formatUAH(price);
       });
-      document.querySelectorAll('#formatSelect option[data-base]').forEach(function(opt){
+           document.querySelectorAll('#formatSelect option[data-base]').forEach(function(opt){
         var base = parseFloat(opt.getAttribute('data-base'));
         var price = isCoursePrice ? base * 0.85 : base;
         opt.textContent = opt.value + ' — ' + formatUAH(price) + '/міс';
