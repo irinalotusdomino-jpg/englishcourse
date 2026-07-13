@@ -304,7 +304,7 @@
       assemblyLettersCount:  60,  /* ЗМІНИТИ: скільки літер збирається у предмети */
       cameraStartZ: 900,   /* ЗМІНИТИ: стартова відстань камери (політ здалеку) */
       cameraEndZ: 260,     /* ЗМІНИТИ: кінцева відстань камери */
-      introTotalSeconds: 9 /* ЗМІНИТИ: загальна тривалість вступної анімації, сек */
+      introTotalSeconds: 6.5 /* ЗМІНИТИ: загальна тривалість вступної анімації, сек */
     }
   };
 
@@ -554,55 +554,55 @@
       return;
     }
 
-    /* -------- головна GSAP-таймлінія -------- */
+    /* -------- головна GSAP-таймлінія (скорочена, повний інтро ~6.5с) -------- */
     var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
     /* 1. Камера летить крізь хмару літер */
-    tl.to(camera.position, { z: CONFIG.scene.cameraEndZ, duration: 2.2, ease: 'power2.in' }, 0);
+    tl.to(camera.position, { z: CONFIG.scene.cameraEndZ, duration: 1.3, ease: 'power2.in' }, 0);
 
     /* показуємо assembly-літери */
     tl.to(assemblyLetters.map(function (s) { return s.material; }), {
-      opacity: 1, duration: 0.6, stagger: 0.01
-    }, 1.2);
+      opacity: 1, duration: 0.35, stagger: 0.006
+    }, 0.7);
 
     /* 2. Літери збираються у предмети по черзі, з появою слова під кожним */
-    var t = 1.9;
+    var t = 1.0;
     shapes.forEach(function (shapePts, idx) {
       assemblyLetters.forEach(function (s, li) {
         var p = shapePts[li % shapePts.length];
-        tl.to(s.position, { x: p.x, y: p.y, z: -40, duration: 0.9, ease: 'power3.out' }, t);
-        tl.to(s.rotation, { z: Math.random() * 1.4 - 0.7, duration: 0.9 }, t);
+        tl.to(s.position, { x: p.x, y: p.y, z: -40, duration: 0.5, ease: 'power3.out' }, t);
+        tl.to(s.rotation, { z: Math.random() * 1.4 - 0.7, duration: 0.5 }, t);
       });
 
-      tl.call(function () { wordEl.textContent = words[idx]; }, null, t + 0.5);
-      tl.to(wordEl, { opacity: 1, scale: 1, duration: 0.4 }, t + 0.55);
-      tl.to(wordEl, { opacity: 0, scale: 0.7, duration: 0.3 }, t + 1.15);
+      tl.call(function () { wordEl.textContent = words[idx]; }, null, t + 0.28);
+      tl.to(wordEl, { opacity: 1, scale: 1, duration: 0.22 }, t + 0.3);
+      tl.to(wordEl, { opacity: 0, scale: 0.7, duration: 0.18 }, t + 0.65);
 
-      t += 1.6;
+      t += 0.85;
     });
 
-    /* 3. Останнє слово ("TALK") утримується довше і веде у речення */
+    /* 3. Останнє слово ("TALK") утримується трохи довше і веде у речення */
     tl.call(function () { wordEl.textContent = words[3]; }, null, t);
-    tl.to(wordEl, { opacity: 1, scale: 1, duration: 0.4 }, t + 0.05);
+    tl.to(wordEl, { opacity: 1, scale: 1, duration: 0.25 }, t + 0.03);
 
     tl.to(assemblyLetters.map(function (s) { return s.material; }), {
-      opacity: 0, duration: 0.5, stagger: 0.01
-    }, t + 0.6);
+      opacity: 0, duration: 0.3, stagger: 0.005
+    }, t + 0.3);
 
-    tl.to(wordEl, { opacity: 0, scale: 1.4, duration: 0.5 }, t + 0.9);
+    tl.to(wordEl, { opacity: 0, scale: 1.4, duration: 0.3 }, t + 0.5);
 
     /* 4. Слово перетворюється на речення (підзаголовок) */
-    tl.fromTo(sentenceEl, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.8 }, t + 1.2);
-    tl.to(sentenceEl, { opacity: 0, y: -20, duration: 0.6 }, t + 2.6);
+    tl.fromTo(sentenceEl, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.45 }, t + 0.7);
+    tl.to(sentenceEl, { opacity: 0, y: -20, duration: 0.3 }, t + 1.3);
 
     /* 5. Речення перетворюється на діалог (дві репліки) */
-    tl.to(bubble1, { opacity: 1, y: 0, scale: 1, duration: 0.5 }, t + 3.0);
-    tl.to(bubble2, { opacity: 1, y: 0, scale: 1, duration: 0.5 }, t + 3.4);
-    tl.to([bubble1, bubble2], { opacity: 0, duration: 0.5 }, t + 4.4);
+    tl.to(bubble1, { opacity: 1, y: 0, scale: 1, duration: 0.25 }, t + 1.55);
+    tl.to(bubble2, { opacity: 1, y: 0, scale: 1, duration: 0.25 }, t + 1.75);
+    tl.to([bubble1, bubble2], { opacity: 0, duration: 0.25 }, t + 2.2);
 
     /* 6. Діалог перетворюється на фінальний контент з кнопками */
-    tl.to(contentEl, { opacity: 1, duration: 0.9 }, t + 4.8);
-    tl.to(scrollEl, { opacity: 1, duration: 0.6 }, t + 5.4);
+    tl.to(contentEl, { opacity: 1, duration: 0.5 }, t + 2.4);
+    tl.to(scrollEl, { opacity: 1, duration: 0.35 }, t + 2.6);
 
   } // end initEngHero
 
