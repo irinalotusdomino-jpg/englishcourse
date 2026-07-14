@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Написати нам — EnglishGoWithUs</title>
+<meta name="robots" content="noindex">
+<style>
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:linear-gradient(180deg,#150c2b 0%,#0d0720 100%);
+    color:#f4f1fb;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    padding:20px 24px;
+    display:flex;
+    align-items:center;
+  }
+  .topbar a{
+    color:#a99fc9;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .topbar a:hover{ color:#f4f1fb; }
+
+  /* ---------- page body ---------- */
+  .page{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px 20px 60px;
+  }
+
+  .contact-wrap{
+    width:100%;
+    max-width:440px;
+  }
+
+  .eyebrow{
+    color:#5eead4;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    margin:0 0 10px;
+    text-align:center;
+  }
+  h1{
+    font-size:clamp(24px, 4vw, 32px);
+    line-height:1.2;
+    margin:0 0 10px;
+    font-weight:800;
+    text-align:center;
+    color:#f4f1fb;
+  }
+  .lede{
+    color:#a99fc9;
+    font-size:15px;
+    line-height:1.5;
+    margin:0 0 30px;
+    text-align:center;
+  }
+
+  .contact-card{
+    background:#241a45;
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:22px;
+    padding:26px 22px;
+  }
+
+  form{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+  }
+  label{
+    font-size:13px;
+    font-weight:700;
+    color:#f4f1fb;
+  }
+  input,
+  textarea{
+    width:100%;
+    padding:13px 14px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.04);
+    color:#f4f1fb;
+    font-size:14.5px;
+    font-family:inherit;
+    outline:none;
+    resize:vertical;
+    transition:border-color .2s ease;
+  }
+  input::placeholder,
+  textarea::placeholder{
+    color:#a99fc9;
+  }
+  input:focus,
+  textarea:focus{
+    border-color:#7a5cf0;
+  }
+
+  .submit-btn{
+    margin-top:6px;
+    display:inline-block;
+    width:100%;
+    padding:16px 20px;
+    border:none;
+    border-radius:999px;
+    background:linear-gradient(90deg,#ec4fa0,#7a5cf0);
+    color:#fff;
+    font-weight:700;
+    font-size:15.5px;
+    font-family:inherit;
+    cursor:pointer;
+    box-shadow:0 0 30px rgba(122,92,240,0.45);
+    transition:transform .2s ease, filter .2s ease;
+  }
+  .submit-btn:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.08);
+  }
+  .submit-btn:disabled{
+    opacity:0.55;
+    cursor:not-allowed;
+    transform:none;
+  }
+
+  .contact-note{
+    margin-top:18px;
+    text-align:center;
+    color:#a99fc9;
+    font-size:12.5px;
+  }
+
+  /* ---------- success state ---------- */
+  .contact-success{
+    text-align:center;
+    padding:10px 4px;
+  }
+  .contact-success .check{
+    width:56px;
+    height:56px;
+    margin:0 auto 16px;
+    border-radius:50%;
+    background:linear-gradient(90deg,#5eead4,#34d399);
+    color:#0d0720;
+    font-size:26px;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .contact-success h2{
+    margin:0 0 8px;
+    font-size:19px;
+    font-weight:800;
+    color:#f4f1fb;
+  }
+  .contact-success p{
+    margin:0;
+    color:#a99fc9;
+    font-size:14px;
+    line-height:1.55;
+  }
+  .contact-success a{
+    display:inline-block;
+    margin-top:22px;
+    color:#f4f1fb;
+    text-decoration:none;
+    font-weight:700;
+    font-size:14px;
+    padding:12px 26px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,0.14);
+  }
+  .contact-success a:hover{
+    background:rgba(255,255,255,0.06);
+  }
+
+  @media(max-width:380px){
+    h1{ font-size:23px; }
+    .contact-card{ padding:22px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    На головну
+  </a>
+</div>
+
+<div class="page">
+  <div class="contact-wrap">
+    <p class="eyebrow">Зв'язок з нами</p>
+    <h1>Напиши нам своє питання</h1>
+    <p class="lede">Заповни форму — відповімо на пошту або в Telegram протягом робочого дня.</p>
+
+    <div class="contact-card">
+      <form id="questionForm">
+        <div class="field">
+          <label for="qName">Ім'я</label>
+          <input type="text" id="qName" name="qName" placeholder="Як до тебе звертатись?" required>
+        </div>
+
+        <div class="field">
+          <label for="qContact">Телефон або пошта</label>
+          <input type="text" id="qContact" name="qContact" placeholder="+380 ... або email@example.com" required>
+        </div>
+
+        <div class="field">
+          <label for="qMessage">Твоє питання</label>
+          <textarea id="qMessage" name="qMessage" rows="5" placeholder="Напиши своє запитання тут..." required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="questionSubmitBtn">Надіслати</button>
+      </form>
+
+      <div class="contact-success" id="questionSuccess" hidden>
+        <div class="check">✓</div>
+        <h2>Дякуємо! Питання надіслано</h2>
+        <p>Ми відповімо тобі на пошту або в Telegram протягом робочого дня.</p>
+        <a href="index.html">← Повернутись на сайт</a>
+      </div>
+
+      <p class="contact-note" id="questionNote">Залишаючи повідомлення, ти погоджуєшся з умовами обробки персональних даних.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* ==========================================================================
+     URL веб-застосунку Google Apps Script.
+     ВАЖЛИВО: має бути ТОЧНО ТАКИМ САМИМ, як window.EGWU_GAS_URL в index.html —
+     обидві форми (заявка на сайті і ця сторінка) пишуть в одну й ту саму
+     Google Таблицю / Telegram. Інструкція зі створення — у файлі apps-script.gs.
+     ========================================================================== */
+  var QUESTION_GAS_URL = 'https://script.google.com/macros/s/AKfycbxsUu4_ohSIOdDJiqsNyFgIFb6ubJ2i46d2mwCp7Q25PMYO1EBjrS67OqfnE3LG0jo4sQ/exec';
+
+  var form       = document.getElementById('questionForm');
+  var submitBtn  = document.getElementById('questionSubmitBtn');
+  var successBox = document.getElementById('questionSuccess');
+  var note       = document.getElementById('questionNote');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    var payload = {
+      type: 'question',
+      name: document.getElementById('qName').value.trim(),
+      contact: document.getElementById('qContact').value.trim(),
+      message: document.getElementById('qMessage').value.trim(),
+      page: location.href,
+      date: new Date().toLocaleString('uk-UA')
+    };
+
+    submitBtn.disabled = true;
+
+    function showSuccess(){
+      form.hidden = true;
+      note.hidden = true;
+      successBox.hidden = false;
+    }
+
+    if (!QUESTION_GAS_URL || QUESTION_GAS_URL.indexOf('ВСТАВТЕ_СЮДИ') !== -1){
+      /* URL ще не налаштований — запасний варіант через звичайну пошту */
+      var mailBody = 'Ім\'я: ' + payload.name + '\nКонтакт: ' + payload.contact + '\n\nПитання:\n' + payload.message;
+      window.location.href = 'mailto:kirillova_irina@ukr.net?subject=' +
+        encodeURIComponent('Питання з сайту') + '&body=' + encodeURIComponent(mailBody);
+      showSuccess();
+      return;
+    }
+
+    fetch(QUESTION_GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(){ showSuccess(); })
+    .catch(function(){
+      console.error('Не вдалося надіслати питання на Google Apps Script');
+      showSuccess();
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
