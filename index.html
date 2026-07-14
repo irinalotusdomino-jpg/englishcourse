@@ -3063,12 +3063,14 @@
 
   /* ---------- quiz teaser (before quiz is revealed) ---------- */
   .quiz-teaser{
-    border-top:1px dashed var(--card-border,rgba(255,255,255,0.14));
-    padding-top:16px;
-    margin-top:2px;
     display:flex;
     flex-direction:column;
     gap:14px;
+  }
+  .quiz-reveal-wrap{
+    border-top:1px dashed var(--card-border,rgba(255,255,255,0.14));
+    padding-top:16px;
+    margin-top:2px;
   }
   .quiz-reveal-btn{
     display:inline-block;
@@ -3258,6 +3260,9 @@
 
       <div class="quiz-teaser" id="quizTeaser" hidden>
         <p class="quiz-intro">Без проблем! Дай відповідь на 14 коротких запитань (~5 хв) — і ми визначимо твій рівень автоматично.</p>
+      </div>
+
+      <div class="quiz-reveal-wrap">
         <button type="button" class="quiz-reveal-btn" id="quizRevealBtn">Дізнатись рівень</button>
       </div>
 
@@ -3394,19 +3399,10 @@
   }catch(e){}
 
   levelSelect.addEventListener('change', function(){
-    if(levelSelect.value === 'unknown'){
-      quizTeaser.hidden = false;
-      quizBlock.hidden = true;
-      quizResult.hidden = true;
-      computedLevel = null;
-    } else {
-      quizTeaser.hidden = true;
-      quizBlock.hidden = true;
-    }
+    quizTeaser.hidden = levelSelect.value !== 'unknown';
   });
 
   quizRevealBtn.addEventListener('click', function(){
-    quizTeaser.hidden = true;
     quizBlock.hidden = false;
     quizBlock.scrollIntoView({ behavior:'smooth', block:'start' });
   });
@@ -3449,7 +3445,6 @@
     e.preventDefault();
 
     if(levelSelect.value === 'unknown' && !computedLevel){
-      quizTeaser.hidden = true;
       quizBlock.hidden = false;
       quizBlock.scrollIntoView({ behavior:'smooth', block:'center' });
       quizHint.classList.add('show');
