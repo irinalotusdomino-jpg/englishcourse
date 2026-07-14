@@ -50,7 +50,7 @@
  * ============================================================
  */
 
-var TELEGRAM_BOT_TOKEN = '8931954355:AAFToPSP8BqCH4lnCvmvO3v_iBMhMIqwI6Y';
+var TELEGRAM_BOT_TOKEN = '8931954355:AAFQliOcCDqgbzuI7JEpeHoBAcSh5GfxJzM';
 var TELEGRAM_CHAT_ID   = '202482053';
 var NOTIFY_EMAIL       = 'kirillova_irina@ukr.net';
 
