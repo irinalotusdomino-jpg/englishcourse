@@ -62,12 +62,12 @@ function doPost(e) {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     sheet.appendRow([
       data.date || new Date().toLocaleString('uk-UA'),
-      type === 'question' ? 'Питання' : 'Заявка',
+      type === 'question' ? 'Питання' : (type === 'trial' ? 'Пробний урок' : 'Заявка'),
       data.name || '',
       data.contact || '',
       data.level || '',
       data.format || '',
-      data.message || '',
+      type === 'trial' ? ('Дата уроку: ' + (data.lessonDate || '-')) : (data.message || ''),
       data.page || ''
     ]);
 
@@ -99,6 +99,13 @@ function sendToTelegram(data, type) {
       '📞 Контакт: ' + (data.contact || '-') + '\n' +
       '💬 Питання: ' + (data.message || '-') + '\n' +
       '🕒 Дата: ' + (data.date || '-');
+  } else if (type === 'trial') {
+    text =
+      '🎓 Безкоштовне заняття — нова заявка\n\n' +
+      '👤 Ім\'я: ' + (data.name || '-') + '\n' +
+      '📞 Телефон: ' + (data.contact || '-') + '\n' +
+      '📅 Дата уроку: ' + (data.lessonDate || '-') + '\n' +
+      '🕒 Заявка залишена: ' + (data.date || '-');
   } else {
     text =
       '🆕 Нова заявка з сайту\n\n' +
@@ -111,7 +118,7 @@ function sendToTelegram(data, type) {
 
   var url = 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage';
 
-  UrlFetchApp.fetch(url, {
+  var response = UrlFetchApp.fetch(url, {
     method: 'post',
     contentType: 'application/json',
     payload: JSON.stringify({
@@ -120,6 +127,13 @@ function sendToTelegram(data, type) {
     }),
     muteHttpExceptions: true
   });
+
+  // якщо Telegram повернув помилку — записуємо в лог, щоб побачити причину
+  // (Apps Script → зліва "Виконання" → відкрити останній запуск → Logs)
+  var code = response.getResponseCode();
+  if (code !== 200) {
+    Logger.log('Telegram API error ' + code + ': ' + response.getContentText());
+  }
 }
 
 function sendQuestionEmail(data) {
