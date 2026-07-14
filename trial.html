@@ -20,8 +20,17 @@
 
     <form
       class="trial__form"
+      action="https://formsubmit.co/kirillova_irina@ukr.net"
+      method="POST"
       id="trialForm"
     >
+      <!-- службові поля FormSubmit -->
+      <input type="hidden" name="_subject" value="Нова заявка на пробний урок — EnglishGo">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="trial.html?sent=1">
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
       <label class="trial__field">
         <span>Ім'я</span>
         <input type="text" name="Ім'я" placeholder="Як до вас звертатись" required>
@@ -310,69 +319,78 @@
   var okBtn = document.getElementById('trialOkBtn');
   var errorMsg = document.getElementById('trialError');
 
-  /* ==========================================================================
-     URL веб-застосунку Google Apps Script.
-     ВАЖЛИВО: має бути ТОЧНО ТАКИМ САМИМ, як window.EGWU_GAS_URL в index.html —
-     всі три форми сайту (заявка, «Написати нам», пробний урок) пишуть
-     в одну й ту саму Google Таблицю / Telegram. Інструкція — у apps-script.gs.
-     ========================================================================== */
-  var TRIAL_GAS_URL = 'https://script.google.com/macros/s/ВСТАВТЕ_СЮДИ_ID_РОЗГОРТАННЯ/exec';
+  // Основний, надійний канал доставки заявки — той самий Google Apps
+  // Script веб-застосунок, що вже використовується на головній сторінці
+  // (пише рядок у Google Таблицю + миттєво шле повідомлення в Telegram).
+  // Запит іде в режимі no-cors, тому браузер не дає прочитати відповідь,
+  // але сам запит майже завжди доходить до сервера — це той самий підхід,
+  // який на index.html вже працює стабільно без збоїв.
+  var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxsUu4_ohSIOdDJiqsNyFgIFb6ubJ2i46d2mwCp7Q25PMYO1EBjrS67OqfnE3LG0jo4sQ/exec';
+
+  // Додатковий (не обов'язковий) канал — лист на пошту через FormSubmit.
+  // Це сторонній сервіс, який іноді блокується рекламними/приватність-
+  // розширеннями браузера відвідувача або тимчасово підвисає — тому він
+  // більше НЕ визначає, побачить людина повідомлення про успіх чи ні.
+  var AJAX_ENDPOINT = 'https://formsubmit.co/ajax/kirillova_irina@ukr.net';
 
   if (form) {
     form.addEventListener('submit', function(e){
       e.preventDefault();
 
       var submitBtn = form.querySelector('.trial__submit');
+      if (submitBtn) submitBtn.disabled = true;
       if (errorMsg) errorMsg.hidden = true;
 
-      var nameVal  = form.querySelector('input[name="Ім\'я"]').value.trim();
-      var phoneVal = form.querySelector('input[name="Телефон"]').value.trim();
-      var dateVal  = form.querySelector('input[name="Дата"]').value;
+      var nameField = form.querySelector('[name="Ім\'я"]');
+      var phoneField = form.querySelector('[name="Телефон"]');
+      var dateField = form.querySelector('[name="Дата"]');
 
-      var payload = {
-        type: 'trial',
-        name: nameVal,
-        contact: phoneVal,
-        message: 'Бажана дата пробного уроку: ' + (dateVal || '-'),
-        page: location.href,
-        date: new Date().toLocaleString('uk-UA')
-      };
+      var name = nameField ? nameField.value.trim() : '';
+      var phone = phoneField ? phoneField.value.trim() : '';
+      var dateVal = dateField ? dateField.value : '';
 
-      if (submitBtn) submitBtn.disabled = true;
-
-      function showSuccess(){
-        form.hidden = true;
-        if (success) success.hidden = false;
-      }
-      function showError(){
-        if (submitBtn) submitBtn.disabled = false;
-        if (errorMsg) errorMsg.hidden = false;
-      }
-
-      if (!TRIAL_GAS_URL || TRIAL_GAS_URL.indexOf('ВСТАВТЕ_СЮДИ') !== -1){
-        /* URL ще не налаштований — запасний варіант через звичайну пошту, щоб форма не блокувала користувача */
-        var mailBody = 'Ім\'я: ' + nameVal + '\nТелефон: ' + phoneVal + '\nБажана дата: ' + (dateVal || '-');
-        window.location.href = 'mailto:kirillova_irina@ukr.net?subject=' +
-          encodeURIComponent('Заявка на пробний урок — EnglishGo') + '&body=' + encodeURIComponent(mailBody);
-        showSuccess();
-        return;
+      // 1) Надійний канал: заявка в Google Таблицю + Telegram
+      try {
+        fetch(GAS_WEBAPP_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            type: 'trial',
+            name: name,
+            contact: phone,
+            message: 'Запис на пробний урок. Обрана дата: ' + dateVal,
+            page: location.href,
+            date: new Date().toLocaleString('uk-UA')
+          })
+        }).catch(function(err){
+          console.error('Не вдалося надіслати заявку в Google Таблицю/Telegram:', err);
+        });
+      } catch (err) {
+        console.error('Не вдалося надіслати заявку в Google Таблицю/Telegram:', err);
       }
 
-      /* mode:'no-cors' — свідомо не читаємо відповідь (Apps Script не віддає CORS-заголовки),
-         тому цей запит не може "зависнути" в очікуванні відповіді сервера і не залежить
-         від сторонніх сервісів на кшталt FormSubmit, які іноді вимагають активації
-         пошти або обмежують безкоштовний тариф */
-      fetch(TRIAL_GAS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      })
-      .then(function(){ showSuccess(); })
-      .catch(function(err){
-        console.error('trial form submit failed:', err);
-        showError();
-      });
+      // 2) Додатковий канал: лист на пошту через FormSubmit (best effort,
+      //    не блокує показ успіху користувачу)
+      try {
+        var formData = new FormData(form);
+        fetch(AJAX_ENDPOINT, {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        }).catch(function(err){
+          console.error('Не вдалося надіслати email через FormSubmit:', err);
+        });
+      } catch (err) {
+        console.error('Не вдалося надіслати email через FormSubmit:', err);
+      }
+
+      // Показуємо успіх одразу, як тільки заявка пішла — так само, як і
+      // на головній сторінці, щоб тимчасовий збій одного з каналів
+      // (наприклад, блокування FormSubmit рекламним розширенням) більше
+      // ніколи не показував відвідувачу хибну помилку.
+      form.hidden = true;
+      if (success) success.hidden = false;
     });
   }
 
@@ -380,6 +398,12 @@
     okBtn.addEventListener('click', function(){
       window.location.href = 'index.html';
     });
+  }
+
+  // якщо форму надіслано успішно і FormSubmit повернув на ?sent=1 (наприклад, без JS)
+  if (window.location.search.indexOf('sent=1') !== -1) {
+    if (form) form.hidden = true;
+    if (success) success.hidden = false;
   }
 })();
 </script>
